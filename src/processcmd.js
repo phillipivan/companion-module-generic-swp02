@@ -13,6 +13,8 @@ module.exports = {
 			this.log('warn', `invalid checksum returned. expected: ${refCheckSum} recieved: ${reply[reply.length - 1]}`)
 			return undefined
 		}
+		let dstSrc = []
+		let varList = []
 		switch (reply[0]) {
 			case cmd.interrogate:
 				if (reply.length != msgLength.interrogate) {
@@ -34,6 +36,15 @@ module.exports = {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.connected} Recieved: ${reply.length}`)
 					return undefined
 				}
+				dstSrc = this.returnDstSrc(reply[1], reply[2], reply[3])
+				if (dstSrc === undefined) {
+					this.log('warn', 'returnDstSrc returned undefined, cannot process tally/connected response')
+					return undefined
+				}
+				this.connections[dstSrc[0]] = dstSrc[1]
+				varList[`dst${dstSrc[0]}`] = this.connections[dstSrc[0]]
+				this.checkFeedbacks('checkCrosspoint')
+				this.setVariableValues(varList)
 				break
 			case cmd.connectOnGo:
 				if (reply.length != msgLength.connectOnGo) {

@@ -52,11 +52,13 @@ class SW_P_02 extends InstanceBase {
 	initVariables() {
 		this.sources = []
 		this.destinations = []
+		this.connections = []
 		for (let i = 1; i <= this.config.src; i++) {
 			this.sources.push({ id: i, label: `Source ${i}` })
 		}
 		for (let i = 1; i <= this.config.dst; i++) {
 			this.destinations.push({ id: i, label: `Destination ${i}` })
+			this.connections[i] = 'unknown'
 		}
 	}
 
