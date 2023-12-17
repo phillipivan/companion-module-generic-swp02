@@ -1,9 +1,9 @@
 const { InstanceStatus, TCPHelper } = require('@companion-module/base')
-const { msgDelay, SOM, keepAliveInterval } = require('./consts.js')
+const { msgDelay, SOM, keepAliveInterval, keepAliveMsg } = require('./consts.js')
 
 module.exports = {
 	async addCmdtoQueue(msg) {
-		if (msg !== undefined && msg.length > 3) {
+		if (msg !== undefined && Array.isArray(msg)) {
 			await this.cmdQueue.push(msg)
 			return true
 		}
@@ -21,13 +21,20 @@ module.exports = {
 	},
 
 	async sendCommand(msg) {
-		if (msg !== undefined) {
+		if (msg !== undefined && Array.isArray(msg)) {
+			this.log('debug', `message: ${msg.toString()}`)
+			let buffer = new Uint8Array(msg.length)
+			for (let i = 0; i < msg.length; i++) {
+				buffer[i] = msg[i]
+			}
+			let cmd = Buffer.from(buffer)
+			this.log('debug', `cmd: ${cmd}`)
 			if (this.socket !== undefined && this.socket.isConnected) {
-				this.log('debug', `Sending Command: ${msg}`)
-				this.socket.send(msg)
+				this.log('debug', `Sending Command: ${cmd}`)
+				this.socket.send(cmd)
 				return true
 			} else {
-				this.log('warn', `Socket not connected, tried to send: ${msg}`)
+				this.log('warn', `Socket not connected, tried to send: ${cmd}`)
 			}
 		} else {
 			this.log('warn', 'Command undefined')
@@ -46,8 +53,7 @@ module.exports = {
 	},
 
 	keepAlive() {
-		//request alive notifications
-		//this.addCmdtoQueue(SOM + cmd.mechaStatusSense)
+		this.addCmdtoQueue(keepAliveMsg)
 		this.keepAliveTimer = setTimeout(() => {
 			this.keepAlive()
 		}, keepAliveInterval)
@@ -84,11 +90,12 @@ module.exports = {
 					line = '',
 					offset = 0
 				this.receiveBuffer += chunk
+				this.log('debug', `chunk recieved: ${chunk}`)
 				while ((i = this.receiveBuffer.indexOf(SOM, offset)) !== -1) {
 					// needs work
 					line = this.receiveBuffer.substr(offset, i - offset)
 					offset = i + 2
-					this.processCmd(line.toString())
+					this.processCmd(line)
 				}
 				this.receiveBuffer = this.receiveBuffer.substr(offset)
 			})

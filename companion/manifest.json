@@ -20,7 +20,7 @@
 		"entrypoint": "../src/main.js"
 	},
 	"legacyIds": [],
-	"manufacturer": ["Pro-Bel", "Snell", "SAM"] ,
+	"manufacturer": "Pro-Bel",
 	"products": ["Router"],
 	"keywords": ["Hardware", "Router", "Video", "SDI"]
 }

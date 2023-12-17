@@ -29,7 +29,7 @@ module.exports = async function (self) {
 			callback: ({ options }) => {
 				return self.connections[options.dst] == options.src
 			},
-			subscribe: async ({ options }) => {
+			subscribe: async () => {
 				//add cmd to interrogate destination
 				//self.addCmdtoQueue(cmd)
 			},
