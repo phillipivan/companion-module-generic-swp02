@@ -1,16 +1,16 @@
 const { cmd, msgLength, cmdParam } = require('./consts.js')
 
 module.exports = {
-	async processCmd(chunk) {
+	processCmd(chunk) {
 		let reply = new Uint8Array(chunk)
 		this.log('debug', `response recieved: ${reply.toString()}`)
 		let reference = []
 		for (let i = 0; i < reply.length - 1; i++) {
 			reference[i] = reply[i]
 		}
-		let reCheckSum = this.calcCheckSum(reference)
-		if (reCheckSum != reply[reply.length - 1]) {
-			this.log('warn', `invalid checksum returned. expected: ${reCheckSum} recieved: ${reply[reply.length - 1]}`)
+		let refCheckSum = this.calcCheckSum(reference)
+		if (refCheckSum != reply[reply.length - 1]) {
+			this.log('warn', `invalid checksum returned. expected: ${refCheckSum} recieved: ${reply[reply.length - 1]}`)
 			return undefined
 		}
 		switch (reply[0]) {
@@ -19,12 +19,14 @@ module.exports = {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.interrogate} Recieved: ${reply.length}`)
 					return undefined
 				}
+				this.log('warn', 'unit unexpectedly returned an interrogate')
 				break
 			case cmd.connect:
 				if (reply.length != msgLength.connect) {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.connect} Recieved: ${reply.length}`)
 					return undefined
 				}
+				this.log('warn', 'unit unexpectedly returned a connect')
 				break
 			case cmd.tally:
 			case cmd.connected:
@@ -38,18 +40,21 @@ module.exports = {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.connectOnGo} Recieved: ${reply.length}`)
 					return undefined
 				}
+				this.log('warn', 'unit unexpectedly returned a connect on go')
 				break
 			case cmd.go:
 				if (reply.length != msgLength.go) {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.go} Recieved: ${reply.length}`)
 					return undefined
 				}
+				this.log('warn', 'unit unexpectedly returned a go')
 				break
 			case cmd.statusRequest:
 				if (reply.length != msgLength.statusRequest) {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.statusRequest} Recieved: ${reply.length}`)
 					return undefined
 				}
+				this.log('warn', 'unit unexpectedly returned a status request')
 				break
 			case cmd.statusResponse1:
 				if (reply.length != msgLength.statusResponse1) {
@@ -95,7 +100,7 @@ module.exports = {
 						this.log('info', `Connect Done Ack: No points prepared`)
 						break
 					default:
-						this.log('warn', `Connect Done Ack: unexpected param`)
+						this.log('warn', `Connect Done Ack: unexpected param: ${reply[1]}`)
 				}
 				break
 			case cmd.extendedInterrogate:
@@ -103,12 +108,14 @@ module.exports = {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.extendedInterrogate} Recieved: ${reply.length}`)
 					return undefined
 				}
+				this.log('warn', 'unit unexpectedly returned a extendedInterrogate')
 				break
 			case cmd.extendedConnect:
 				if (reply.length != msgLength.extendedConnect) {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.extendedConnect} Recieved: ${reply.length}`)
 					return undefined
 				}
+				this.log('warn', 'unit unexpectedly returned a extendedConnect')
 				break
 			case cmd.extendedTally:
 			case cmd.extendedConnected:
@@ -116,12 +123,17 @@ module.exports = {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.extendedConnected} Recieved: ${reply.length}`)
 					return undefined
 				}
+				this.log(
+					'warn',
+					'unit unexpectedly returned a extendedTally/extendedConnected. this module does not handle extended commands'
+				)
 				break
 			case cmd.extendedConnectOnGo:
 				if (reply.length != msgLength.extendedConnectOnGo) {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.extendedConnectOnGo} Recieved: ${reply.length}`)
 					return undefined
 				}
+				this.log('warn', 'unit unexpectedly returned a extendedConnectOnGo')
 				break
 			case cmd.extendedConnectOnGoAck:
 				if (reply.length != msgLength.extendedConnectOnGoAck) {
