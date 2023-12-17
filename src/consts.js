@@ -1,4 +1,3 @@
-//export const regexpAddr = new RegExp(/^.{0,6}[^.*,`"]$/g)
 export const msgDelay = 20 // Always leave at least 20 ms open between commands
 export const cmdsPerMsg = 20 // Refer SW-P-88 V 4b Section 4.2, Page 11
 export const keepAliveInterval = 30000 //half the default time out interval: 60s
