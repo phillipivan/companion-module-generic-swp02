@@ -16,6 +16,9 @@ export const cmd = {
 	statusResponse1: 0x08, //not defined in SW-P-88
 	statusResponse2: 0x09, //not defined in SW-P-88
 	statusResponse3: 0x0a, //not defined in SW-P-88
+	statusResponse6rtrType1: 0x11, //mentioned but not defined in SW-P-88. Maybe actually response 5?
+	statusRequest2: 0x12, //mentioned but not defined in SW-P-88
+	statusResponse6: 0x13, //mentioned but not defined in SW-P-88
 	connectOnGoAck: 0x0c,
 	goDoneAck: 0x0d,
 	extendedInterrogate: 0x41, //not defined in SW-P-88

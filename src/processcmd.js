@@ -88,6 +88,18 @@ module.exports = {
 				}
 				this.log('info', `Status Response 3: ${reply}`)
 				break
+			case cmd.statusResponse6rtrType1:
+				//unknown expected length
+				this.log('info', `statusResponse6rtrType1: ${reply}`)
+				break
+			case cmd.statusRequest2:
+				//unknown expected length
+				this.log('info', `statusRequest2: ${reply}`)
+				break
+			case cmd.statusResponse6:
+				//unknown expected length
+				this.log('info', `statusResponse6: ${reply}`)
+				break
 			case cmd.connectOnGoAck:
 				if (reply.length != msgLength.interrconnectOnGoAckogate) {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.connectOnGoAck} Recieved: ${reply.length}`)
