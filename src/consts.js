@@ -20,6 +20,7 @@ export const cmd = {
 	statusResponse6: 0x13, //mentioned but not defined in SW-P-88
 	connectOnGoAck: 0x0c,
 	goDoneAck: 0x0d,
+	unknown: 0x32, //probel general switcher sends this on connect
 	extendedInterrogate: 0x41, //not defined in SW-P-88
 	extendedConnect: 0x42, //not defined in SW-P-88
 	extendedTally: 0x43, //not defined in SW-P-88
@@ -40,6 +41,9 @@ export const cmdParam = {
 		set: 0x00,
 		clear: 0x01,
 		none: 0x02,
+	},
+	unknown: {
+		unknown: 0x4e, //probel general switcher sends on connect
 	},
 }
 //connectOnGoAck, goDoneAck only supported by 2413/4 HD LOCAL CONTROLLER, XD LOCAL CONTROLLER (2419)
