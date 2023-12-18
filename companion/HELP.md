@@ -13,9 +13,10 @@ Enter the IP address, port and source and destination count.
 - **GO** Set / Clear
 
 ## Variables
-
+- **Destion** Returns the source number conencted to a destinations.
 
 ## Feedbacks
+- **Crosspoint** True when the specified crosspoint is connected
 
 
 ## Version History

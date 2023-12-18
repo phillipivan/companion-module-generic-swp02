@@ -1,5 +1,5 @@
 const { InstanceStatus, TCPHelper } = require('@companion-module/base')
-const { msgDelay, SOM, keepAliveInterval, keepAliveMsg } = require('./consts.js')
+const { msgDelay, SOM, cmd, keepAliveInterval, keepAliveMsg } = require('./consts.js')
 
 module.exports = {
 	async addCmdtoQueue(msg) {
@@ -47,7 +47,14 @@ module.exports = {
 		if (this.config.interrogate) {
 			//interrogate all destinations
 			for (let i = 1; i <= this.config.dst; i++) {
-				//addCmdtoQueue interrogate DST I
+				let dst = this.calcDivMod(i - 1)
+				this.addCmdtoQueue([
+					SOM,
+					cmd.interrogate,
+					dst[0] * 16,
+					dst[1],
+					this.calcCheckSum([cmd.interrogate, dst[0] * 16, dst[1]]),
+				])
 			}
 		}
 	},
