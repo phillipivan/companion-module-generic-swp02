@@ -21,6 +21,7 @@ export const cmd = {
 	connectOnGoAck: 0x0c,
 	goDoneAck: 0x0d,
 	unknown: 0x32, //probel general switcher sends this on connect
+	unknownResp: 0x33, // router responds to 0x32
 	extendedInterrogate: 0x41, //not defined in SW-P-88
 	extendedConnect: 0x42, //not defined in SW-P-88
 	extendedTally: 0x43, //not defined in SW-P-88
@@ -42,12 +43,9 @@ export const cmdParam = {
 		clear: 0x01,
 		none: 0x02,
 	},
-	unknown: {
-		unknown: 0x4e, //probel general switcher sends on connect
-	},
 }
 //connectOnGoAck, goDoneAck only supported by 2413/4 HD LOCAL CONTROLLER, XD LOCAL CONTROLLER (2419)
-
+// lengths exlude SOM
 export const msgLength = {
 	interrogate: 4,
 	connect: 5,
@@ -61,6 +59,8 @@ export const msgLength = {
 	statusResponse3: 5,
 	connectOnGoAck: 5,
 	goDoneAck: 3,
+	unknown: 2,
+	unknownResp: 4,
 	extendedInterrogate: 4,
 	extendedConnect: 6,
 	extendedTally: 7,

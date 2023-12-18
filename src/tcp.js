@@ -42,6 +42,9 @@ module.exports = {
 
 	//queries made on initial connection.
 	async queryOnConnect() {
+		//the queries probel general switcher makes upon connecting
+		this.addCmdtoQueue([SOM, cmd.unknown, this.calcCheckSum([cmd.unknown])])
+		this.addCmdtoQueue([SOM, cmd.routerConfigurationRequest, this.calcCheckSum([cmd.routerConfigurationRequest])])
 		if (this.config.interrogate) {
 			//interrogate all destinations
 			for (let i = 1; i <= this.config.dst; i++) {
