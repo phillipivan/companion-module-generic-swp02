@@ -8,6 +8,7 @@ module.exports = {
 		this.updateActions()
 		this.updateFeedbacks()
 		this.updateVariableDefinitions()
+		this.updateVariableValues()
 		this.initTCP()
 	},
 	// Return config fields for web config

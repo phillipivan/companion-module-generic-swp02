@@ -28,13 +28,11 @@ module.exports = {
 				buffer[i] = msg[i]
 			}
 			let cmd = Buffer.from(buffer)
-			this.log('debug', `cmd: ${cmd}`)
 			if (this.socket !== undefined && this.socket.isConnected) {
-				this.log('debug', `Sending Command: ${cmd}`)
 				this.socket.send(cmd)
 				return true
 			} else {
-				this.log('warn', `Socket not connected, tried to send: ${cmd}`)
+				this.log('warn', `Socket not connected, tried to send: ${cmd.toString()}`)
 			}
 		} else {
 			this.log('warn', 'Command undefined')

@@ -24,7 +24,7 @@ class SW_P_02 extends InstanceBase {
 		this.cmdTimer = setTimeout(() => {
 			this.processCmdQueue()
 		}, msgDelay)
-		await this.initVariables()
+		this.initVariables()
 		this.updateActions() // export actions
 		this.updateFeedbacks() // export feedbacks
 		this.updateVariableDefinitions() // export variable definitions
@@ -46,6 +46,9 @@ class SW_P_02 extends InstanceBase {
 
 	updateVariableValues() {
 		let varList = []
+		for (let i = 1; i <= this.config.dst; i++) {
+			varList[`dst${i}`] = this.connections[i]
+		}
 		this.setVariableValues(varList)
 	}
 
@@ -53,16 +56,13 @@ class SW_P_02 extends InstanceBase {
 		this.sources = []
 		this.destinations = []
 		this.connections = []
-		let varList = []
 		for (let i = 1; i <= this.config.src; i++) {
 			this.sources.push({ id: i, label: `Source ${i}` })
 		}
 		for (let i = 1; i <= this.config.dst; i++) {
 			this.destinations.push({ id: i, label: `Destination ${i}` })
 			this.connections[i] = 'unknown'
-			varList[`dst${i}`] = this.connections[i]
 		}
-		this.setVariableValues(varList)
 	}
 
 	updateActions() {
