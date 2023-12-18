@@ -1,8 +1,8 @@
-//const {} = require('./consts.js')
+const { cmdParam } = require('./consts.js')
 
 module.exports = {
 	go_mode: [
-		{ id: this.cmdParam.go.set, label: 'Set' },
-		{ id: this.cmdParam.go.clear, label: 'Clear' },
+		{ id: cmdParam.go.set, label: 'Set' },
+		{ id: cmdParam.go.clear, label: 'Clear' },
 	],
 }
