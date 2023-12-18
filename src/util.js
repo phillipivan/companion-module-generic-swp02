@@ -3,12 +3,12 @@ module.exports = {
 	calcCheckSum(msg) {
 		let sum = 0
 		if (Array.isArray(msg)) {
-			for (const element in msg) {
-				if (isNaN(element)) {
-					this.log('warn', `calcCheckSum has been passed a NaN: ${element}`)
+			for (let i = 0; i < msg.length; i++) {
+				if (isNaN(msg[i])) {
+					this.log('warn', `calcCheckSum has been passed a NaN: ${msg[i]}`)
 					return undefined
 				}
-				sum += element
+				sum += msg[i]
 			}
 			return twoComp - (sum % twoComp)
 		}
