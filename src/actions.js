@@ -1,6 +1,5 @@
 //const { Regex } = require('@companion-module/base')
-const { SOM, cmd } = require('./consts.js')
-const { calcDivMod } = require('./util.js')
+const { SOM, cmd, cmdParam } = require('./consts.js')
 
 module.exports = function (self) {
 	self.setActionDefinitions({
@@ -36,13 +35,13 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: dst: ${dst} src: ${src}`)
 					return undefined
 				}
-				dst = calcDivMod(dst - 1)
-				src = calcDivMod(src - 1)
+				dst = self.calcDivMod(dst - 1)
+				src = self.calcDivMod(src - 1)
 				self.log(
 					'debug',
 					`som: ${SOM} cmd: ${cmd.connect} multiplier: ${dst[0] * 16 + src[0]} dst: ${dst[1]} src: ${
 						src[1]
-					} checksum: ${self.calcCheckSum(cmd.connect, dst[0] * 16 + src[0], dst[1], src[1])}`
+					} checksum: ${self.calcCheckSum([cmd.connect, dst[0] * 16 + src[0], dst[1], src[1]])}`
 				)
 				self.addCmdtoQueue([
 					SOM,
@@ -50,7 +49,7 @@ module.exports = function (self) {
 					dst[0] * 16 + src[0],
 					dst[1],
 					src[1],
-					self.calcCheckSum(cmd.connect, dst[0] * 16 + src[0], dst[1], src[1]),
+					self.calcCheckSum([cmd.connect, dst[0] * 16 + src[0], dst[1], src[1]]),
 				])
 			},
 			subscribe: async ({ options }) => {
@@ -60,14 +59,23 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: ${dst}`)
 					return undefined
 				}
-				dst = calcDivMod(dst - 1)
+				dst = self.calcDivMod(dst - 1)
 				let multiplier = dst[0] * 16
-				let checksum = self.calcCheckSum([cmd.interrogate, multiplier, dst[1]])
 				self.log(
 					'debug',
-					`som: ${SOM} cmd: ${cmd.interrogate} multiplier: ${multiplier} dst: ${dst[1]} checksum: ${checksum}`
+					`som: ${SOM} cmd: ${cmd.interrogate} multiplier: ${multiplier} dst: ${dst[1]} checksum: ${self.calcCheckSum([
+						cmd.interrogate,
+						multiplier,
+						dst[1],
+					])}`
 				)
-				self.addCmdtoQueue([SOM, cmd.interrogate, multiplier, dst[1], checksum])
+				self.addCmdtoQueue([
+					SOM,
+					cmd.interrogate,
+					multiplier,
+					dst[1],
+					self.calcCheckSum([cmd.interrogate, multiplier, dst[1]]),
+				])
 			},
 			learn: async (action) => {
 				let dst = parseInt(await self.parseVariablesInString(action.options.dst))
@@ -75,12 +83,22 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: ${dst}`)
 					return undefined
 				}
-				dst = calcDivMod(dst - 1)
-				let multiplier = dst[0] * 16
-				let checksum = self.calcCheckSum(cmd.interrogate, multiplier, dst[1])
-				let msg = [SOM, cmd.interrogate, multiplier, dst[1], checksum]
-				self.log('debug', `som: ${msg[0]} cmd: ${msg[1]} multiplier: ${msg[2]} dst: ${msg[3]} checksum: ${msg[4]}`)
-				self.addCmdtoQueue(msg)
+				dst = self.calcDivMod(dst - 1)
+				self.log(
+					'debug',
+					`som: ${SOM} cmd: ${cmd.interrogate} multiplier: ${dst[0] * 16} dst: ${dst[1]} checksum: ${self.calcCheckSum(
+						cmd.interrogate,
+						dst[0] * 16,
+						dst[1]
+					)}`
+				)
+				self.addCmdtoQueue([
+					SOM,
+					cmd.interrogate,
+					dst[0] * 16,
+					dst[1],
+					self.calcCheckSum(cmd.interrogate, dst[0] * 16, dst[1]),
+				])
 				const source = self.connections[dst]
 				return {
 					...action.options,
@@ -109,7 +127,7 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: dst: ${dst}}`)
 					return undefined
 				}
-				dst = calcDivMod(dst - 1)
+				dst = self.calcDivMod(dst - 1)
 				self.addCmdtoQueue([
 					SOM,
 					cmd.connect,
@@ -124,7 +142,7 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: ${dst}`)
 					return undefined
 				}
-				dst = calcDivMod(dst - 1)
+				dst = self.calcDivMod(dst - 1)
 				self.addCmdtoQueue([
 					SOM,
 					cmd.interrogate,
@@ -132,26 +150,6 @@ module.exports = function (self) {
 					dst[1],
 					self.calcCheckSum([cmd.interrogate, dst[0] * 16, dst[1]]),
 				])
-			},
-			learn: async (action) => {
-				let dst = parseInt(await self.parseVariablesInString(action.options.dst))
-				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
-					self.log('warn', `an invalid varible has been passed: ${dst}`)
-					return undefined
-				}
-				dst = calcDivMod(dst - 1)
-				self.addCmdtoQueue([
-					SOM,
-					cmd.interrogate,
-					dst[0] * 16,
-					dst[1],
-					self.calcCheckSum(cmd.interrogate, dst[0] * 16, dst[1]),
-				])
-				const source = self.connections[dst]
-				return {
-					...action.options,
-					src: source,
-				}
 			},
 		},
 		connectOnGo: {
@@ -186,8 +184,8 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: dst: ${dst} src: ${src}`)
 					return undefined
 				}
-				dst = calcDivMod(dst - 1)
-				src = calcDivMod(src - 1)
+				dst = self.calcDivMod(dst - 1)
+				src = self.calcDivMod(src - 1)
 				self.log(
 					'debug',
 					`som: ${SOM} cmd: ${cmd.connectOnGo} multiplier: ${dst[0] * 16 + src[0]} dst: ${dst[1]} src: ${
@@ -203,42 +201,8 @@ module.exports = function (self) {
 					self.calcCheckSum(cmd.connectOnGo, dst[0] * 16 + src[0], dst[1], src[1]),
 				])
 			},
-			subscribe: async ({ options }) => {
-				//add cmd to interrogate destination
-				let dst = parseInt(await self.parseVariablesInString(options.dst))
-				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
-					self.log('warn', `an invalid varible has been passed: ${dst}`)
-					return undefined
-				}
-				dst = calcDivMod(dst - 1)
-				let multiplier = dst[0] * 16
-				let checksum = self.calcCheckSum([cmd.interrogate, multiplier, dst[1]])
-				self.log(
-					'debug',
-					`som: ${SOM} cmd: ${cmd.interrogate} multiplier: ${multiplier} dst: ${dst[1]} checksum: ${checksum}`
-				)
-				self.addCmdtoQueue([SOM, cmd.interrogate, multiplier, dst[1], checksum])
-			},
-			learn: async (action) => {
-				let dst = parseInt(await self.parseVariablesInString(action.options.dst))
-				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
-					self.log('warn', `an invalid varible has been passed: ${dst}`)
-					return undefined
-				}
-				dst = calcDivMod(dst - 1)
-				let multiplier = dst[0] * 16
-				let checksum = self.calcCheckSum(cmd.interrogate, multiplier, dst[1])
-				let msg = [SOM, cmd.interrogate, multiplier, dst[1], checksum]
-				self.log('debug', `som: ${msg[0]} cmd: ${msg[1]} multiplier: ${msg[2]} dst: ${msg[3]} checksum: ${msg[4]}`)
-				self.addCmdtoQueue(msg)
-				const source = self.connections[dst]
-				return {
-					...action.options,
-					src: source,
-				}
-			},
 		},
-		go: {
+		goSetClear: {
 			name: 'Go',
 			description: 'Set or clear prepared crosspoints',
 			options: [
@@ -247,7 +211,7 @@ module.exports = function (self) {
 					id: 'mode',
 					label: 'Mode',
 					choices: self.go_mode,
-					default: self.cmdParam.go.set,
+					default: cmdParam.go.set,
 				},
 			],
 			callback: async ({ options }) => {
