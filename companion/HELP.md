@@ -21,5 +21,5 @@ Enter the IP address, port and source and destination count.
 
 ## Version History
 
-### Version 0.8.0
-- W.I.P.
+### Version 1.0.0
+- Initial release

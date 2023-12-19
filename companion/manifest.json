@@ -1,12 +1,12 @@
 {
-	"id": "Pro-Bel-SW-P-02",
-	"name": "Pro-Bel-SW-P-02",
+	"id": "Generic-SW-P-02",
+	"name": "Generic-SW-P-02",
 	"shortname": "SW-P-02",
-	"description": "Bitfocus Companion module for router control via Pro Bel SW P 02 protocol",
+	"description": "Bitfocus Companion module for router control via Pro Bel SW-P-02 protocol",
 	"version": "1.0.0",
 	"license": "MIT",
-	"repository": "git+https://github.com/phillipivan/companion-module-pro-bel-sw-p-02",
-	"bugs": "https://github.com/phillipivan/companion-module-pro-bel-sw-p-02/issues",
+	"repository": "git+https://github.com/bitfocus/companion-module-generic-swp02.git",
+	"bugs": "https://github.com/bitfocus/companion-module-generic-swp02/issues",
 	"maintainers": [
 		{
 			"name": "Phillip Ivan Pietruschka",
