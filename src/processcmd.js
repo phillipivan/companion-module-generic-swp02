@@ -3,7 +3,7 @@ const { cmd, msgLength, cmdParam } = require('./consts.js')
 module.exports = {
 	processCmd(chunk) {
 		let reply = new Uint8Array(chunk)
-		this.log('debug', `response recieved: ${reply.toString()}`)
+		this.log('debug', `response recieved: ${reply} reply length: ${reply.length}`)
 		let reference = []
 		for (let i = 0; i < reply.length - 1; i++) {
 			reference[i] = reply[i]
@@ -15,6 +15,7 @@ module.exports = {
 		}
 		let dstSrc = []
 		let varList = []
+		this.log('debug', `response command recieved: ${reply[0]}`)
 		switch (reply[0]) {
 			case cmd.interrogate:
 				if (reply.length != msgLength.interrogate) {
@@ -36,6 +37,7 @@ module.exports = {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.connected} Recieved: ${reply.length}`)
 					return undefined
 				}
+				this.log('info', `tally/connected msg recieved: ${reply}`)
 				dstSrc = this.returnDstSrc(reply[1], reply[2], reply[3])
 				if (dstSrc === undefined) {
 					this.log('warn', 'returnDstSrc returned undefined, cannot process tally/connected response')

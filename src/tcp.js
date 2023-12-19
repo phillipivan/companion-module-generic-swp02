@@ -21,15 +21,15 @@ module.exports = {
 	},
 
 	async sendCommand(msg) {
+		msg = msg.toString().split(',')
 		if (msg !== undefined && Array.isArray(msg)) {
-			this.log('debug', `message: ${msg.toString()}`)
+			//this.log('debug', `message: ${msg.toString()} message length: ${msg.length}`)
 			let buffer = new Uint8Array(msg.length)
 			for (let i = 0; i < msg.length; i++) {
 				buffer[i] = msg[i]
 			}
-			let cmd = Buffer.from(buffer)
 			if (this.socket !== undefined && this.socket.isConnected) {
-				this.socket.send(cmd)
+				this.socket.send(buffer)
 				return true
 			} else {
 				this.log('warn', `Socket not connected, tried to send: ${cmd.toString()}`)
@@ -94,18 +94,23 @@ module.exports = {
 				}, keepAliveInterval)
 			})
 			this.socket.on('data', (chunk) => {
-				let i = 0,
+				if (Buffer.compare(chunk, this.receiveBuffer) != 0) {
+					this.log('debug', `data recieved: ${chunk}`)
+					this.processCmdQueue(chunk)
+					this.receiveBuffer = chunk
+				}
+/* 				let i = 0,
 					line = '',
 					offset = 0
 				this.receiveBuffer += chunk
 				this.log('debug', `chunk recieved: ${chunk}`)
 				while ((i = this.receiveBuffer.indexOf(SOM, offset)) !== -1) {
-					// needs work
+					this.log('debug', 'found SOM')
 					line = this.receiveBuffer.substr(offset, i - offset)
-					offset = i + 2
+					offset = i + 1
 					this.processCmd(line)
 				}
-				this.receiveBuffer = this.receiveBuffer.substr(offset)
+				this.receiveBuffer = this.receiveBuffer.substr(offset) */
 			})
 		} else {
 			this.updateStatus(InstanceStatus.BadConfig)
