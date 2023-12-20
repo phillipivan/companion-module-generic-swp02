@@ -1,8 +1,9 @@
-const { cmd, msgLength, cmdParam } = require('./consts.js')
+const { cmd, msgLength, cmdParam, extendedCommandSet, SOM } = require('./consts.js')
 
 module.exports = {
 	processCmd(chunk) {
-		let reply = new Uint8Array(chunk)
+		let msg = new Uint8Array(chunk)
+		let reply = msg[0] == SOM ? msg.subarray(1) : msg
 		this.log('debug', `response recieved: ${reply} reply length: ${reply.length}`)
 		let reference = []
 		for (let i = 0; i < reply.length - 1; i++) {
@@ -17,6 +18,9 @@ module.exports = {
 		let varList = []
 		this.log('debug', `response command recieved: ${reply[0]}`)
 		switch (reply[0]) {
+			case cmd.databaseChecksum:
+				this.log('info', `db checksum recieved ${reply}`)
+				break
 			case cmd.interrogate:
 				if (reply.length != msgLength.interrogate) {
 					this.log('warn', `Unexpected Length. Expected: ${msgLength.interrogate} Recieved: ${reply.length}`)
@@ -90,17 +94,7 @@ module.exports = {
 				}
 				this.log('info', `Status Response 3: ${reply}`)
 				break
-			case cmd.statusResponse6rtrType1:
-				//unknown expected length
-				this.log('info', `statusResponse6rtrType1: ${reply}`)
-				break
-			case cmd.statusRequest2:
-				//unknown expected length
-				this.log('info', `statusRequest2: ${reply}`)
-				break
-			case cmd.statusResponse6:
-				//unknown expected length
-				this.log('info', `statusResponse6: ${reply}`)
+			case cmd.enableCrosspointUpdate:
 				break
 			case cmd.connectOnGoAck:
 				if (reply.length != msgLength.interrconnectOnGoAckogate) {
@@ -127,6 +121,68 @@ module.exports = {
 					default:
 						this.log('warn', `Connect Done Ack: unexpected param: ${reply[1]}`)
 				}
+				break
+			case cmd.sourceLockStatusRequest:
+				break
+			case cmd.sourceLockStatusResponse:
+				break
+			case cmd.statusResponse4:
+				break
+			case cmd.statusResponse5:
+				break
+			case cmd.statusRequest2:
+				break
+			case cmd.statusResponse6:
+				break
+			case cmd.mixerInterrogate:
+				break
+			case cmd.mixerConnect:
+				break
+			case cmd.mixerTallyDump:
+				break
+			case cmd.mixerConnected:
+				break
+			case cmd.assignSlot:
+				break
+			case cmd.readSlotAssignment:
+				break
+			case cmd.setOutputGain:
+				break
+			case cmd.readOutputGain:
+				break
+			case cmd.readTwinkler:
+				break
+			case cmd.twinklerStatus:
+				break
+			case cmd.installedModulesStatusRequest:
+				break
+			case cmd.installedModulesStatusResponse1:
+				break
+			case cmd.mixerDisconnected:
+				break
+			case cmd.installedModulesStatusResponse3:
+				break
+			case cmd.connectOnGoGroupSalvo:
+				break
+			case cmd.goGroupSalvo:
+				break
+			case cmd.connectOnGoGroupSalvoAck:
+				break
+			case cmd.goDoneGroupSalvoAck:
+				break
+			case cmd.installedModulesStatusResponse2:
+				break
+			case cmd.routerInputOutputParametersInterrogate:
+				break
+			case cmd.routerInputOutputParametersTally:
+				break
+			case cmd.routerInputOutputParametersConnect:
+				break
+			case cmd.routerInputOutputParametersConnected:
+				break
+			case cmd.dualControllerStatusRequest:
+				break
+			case cmd.dualControllerStatusResponse:
 				break
 			case cmd.extendedInterrogate:
 				if (reply.length != msgLength.extendedInterrogate) {
@@ -167,6 +223,14 @@ module.exports = {
 				}
 				this.log('info', `Extended Connect on Go Ack`)
 				break
+			case cmd.extendedConnectOnGoGroupSalvo:
+				break
+			case cmd.extendedConnectOnGoGroupSalvoAck:
+				break
+			case cmd.statusDataRequest:
+				break
+			case cmd.statusDataResponse1:
+				break
 			case cmd.routerConfigurationRequest:
 				if (reply.length != msgLength.routerConfigurationRequest) {
 					this.log(
@@ -196,6 +260,84 @@ module.exports = {
 					return undefined
 				}
 				this.log('info', `Router Configuration Response 2: ${reply}`)
+				break
+			case cmd.probelInternalUse1:
+				break
+			case cmd.probelInternalUse2:
+				break
+			case cmd.probelInternalUse3:
+				break
+			case cmd.probelInternalUse4:
+				break
+			case cmd.probelInternalUse5:
+				break
+			case cmd.broadcastTech16x2reserved1:
+				break
+			case cmd.broadcastTech16x2reserved2:
+				break
+			case cmd.broadcastTech16x2reserved3:
+				break
+			case cmd.broadcastTech16x2reserved4:
+				break
+			case cmd.broadcastTech16x2reserved5:
+				break
+			case cmd.broadcastTech16x2reserved6:
+				break
+			case cmd.extendedProtectTally:
+				break
+			case cmd.extendedProtectConnected:
+				break
+			case cmd.extendedProtectDisconected:
+				break
+			case cmd.protectDeviceNameResponse:
+				break
+			case cmd.extendedProtectTallyDump:
+				break
+			case cmd.extendedProtectInterrogate:
+				break
+			case cmd.extendedProtectConnect:
+				break
+			case cmd.protectDeviceNameRequest:
+				break
+			case cmd.extendedProtectDisconnect:
+				break
+			case cmd.extendedProtectTallyDumpRequest:
+				break
+			case cmd.preprocessingConfigRequest:
+				break
+			case cmd.preprocessingConfigResponse:
+				break
+			case cmd.preprocessingInterrogate:
+				break
+			case cmd.preprocessingConnect:
+				break
+			case cmd.preprocessingTally:
+				break
+			case cmd.preprocessingConnected:
+				break
+			case cmd.cannotExecute:
+				break
+			case cmd.extendedCommandSet:
+				switch (reply[1]) {
+					case extendedCommandSet.monitorRowInterrogate:
+						break
+					case extendedCommandSet.monitorRowConnect:
+						break
+					case extendedCommandSet.monitorRowTally:
+						break
+					case extendedCommandSet.monitorRowConnected:
+						break
+					default:
+						this.log('warn', `Unknown extended command: ${reply}`)
+				}
+				break
+			case cmd.xTallyStatus:
+				break
+			case cmd.xTallyInterrogate:
+				break
+			case cmd.xTallyStatusAck:
+				break
+			case cmd.xTallyResponse:
 				break
 			default:
 				this.log('warn', `Unexpected response from unit: ${reply.toString()}`)

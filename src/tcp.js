@@ -43,7 +43,12 @@ module.exports = {
 	//queries made on initial connection.
 	async queryOnConnect() {
 		//the queries probel general switcher makes upon connecting
-		this.addCmdtoQueue([SOM, cmd.databaseChecksum, cmdParam.databaseChecksum.requestChecksum, this.calcCheckSum([cmd.databaseChecksum, cmdParam.databaseChecksum.requestChecksum])])
+		this.addCmdtoQueue([
+			SOM,
+			cmd.databaseChecksum,
+			cmdParam.databaseChecksum.requestChecksum,
+			this.calcCheckSum([cmd.databaseChecksum, cmdParam.databaseChecksum.requestChecksum]),
+		])
 		this.addCmdtoQueue([SOM, cmd.dualControllerStatusRequest, this.calcCheckSum([cmd.dualControllerStatusRequest])])
 		this.addCmdtoQueue([SOM, cmd.routerConfigurationRequest, this.calcCheckSum([cmd.routerConfigurationRequest])])
 		if (this.config.interrogate) {
@@ -69,7 +74,7 @@ module.exports = {
 	},
 
 	initTCP() {
-		this.receiveBuffer = ''
+		//this.receiveBuffer = ''
 		if (this.socket !== undefined) {
 			this.socket.destroy()
 			delete this.socket
@@ -95,23 +100,31 @@ module.exports = {
 				}, keepAliveInterval)
 			})
 			this.socket.on('data', (chunk) => {
-				if (Buffer.compare(chunk, this.receiveBuffer) != 0) {
+/* 				if (Buffer.compare(chunk, this.receiveBuffer) != 0) {
 					this.log('debug', `data recieved: ${chunk}`)
-					this.processCmdQueue(chunk)
+					//this.processCmdQueue(chunk)
 					this.receiveBuffer = chunk
-				}
-/* 				let i = 0,
-					line = '',
+				} */
+				let i = 0,
 					offset = 0
-				this.receiveBuffer += chunk
-				this.log('debug', `chunk recieved: ${chunk}`)
-				while ((i = this.receiveBuffer.indexOf(SOM, offset)) !== -1) {
+				let receiveBuffer = Buffer.from(chunk)
+				this.log('debug', `chunk recieved: ${receiveBuffer}`)
+				while ((i = receiveBuffer.indexOf(SOM, offset)) !== -1) {
 					this.log('debug', 'found SOM')
-					line = this.receiveBuffer.substr(offset, i - offset)
+					let nextSOM = receiveBuffer.indexOf(SOM, offset) == -1 ? receiveBuffer.length - 1 : receiveBuffer.indexOf(SOM, offset)
+					let line = Buffer.alloc(nextSOM - offset)
+					for (let j = 0; j < line.length; j++) {
+						line[j] = receiveBuffer[j + offset]
+					}
 					offset = i + 1
 					this.processCmd(line)
 				}
-				this.receiveBuffer = this.receiveBuffer.substr(offset) */
+				receiveBuffer = this.receiveBuffer.substr(offset)
+				if (receiveBuffer[0] == SOM) {
+					this.log('debug', 'found another SOM')
+					this.processCmd(receiveBuffer)
+					receiveBuffer = null
+				}
 			})
 		} else {
 			this.updateStatus(InstanceStatus.BadConfig)

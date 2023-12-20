@@ -1,6 +1,6 @@
 ## SW-P-02 Router Control Protocol
 
-Referenced to Document: SW-P-88 Issue 4b. 5 July 2016
+Referenced to Document: SW-P-02 Issue 37. 07/09/2017.
 
 
 ## Configuration
