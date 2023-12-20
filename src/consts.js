@@ -119,7 +119,7 @@ export const cmdParam = {
 		},
 		byte2: {
 			idleControllerOK: 0x00,
-			indleControllerFaulty: 0x01,
+			idleControllerFaulty: 0x01,
 		},
 	},
 }
