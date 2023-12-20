@@ -1,5 +1,5 @@
 const { InstanceStatus, TCPHelper } = require('@companion-module/base')
-const { msgDelay, SOM, cmd, keepAliveInterval, keepAliveMsg } = require('./consts.js')
+const { msgDelay, SOM, cmd, cmdParam, keepAliveInterval } = require('./consts.js')
 
 module.exports = {
 	async addCmdtoQueue(msg) {
@@ -43,7 +43,8 @@ module.exports = {
 	//queries made on initial connection.
 	async queryOnConnect() {
 		//the queries probel general switcher makes upon connecting
-		this.addCmdtoQueue([SOM, cmd.unknown, this.calcCheckSum([cmd.unknown])])
+		this.addCmdtoQueue([SOM, cmd.databaseChecksum, cmdParam.databaseChecksum.requestChecksum, this.calcCheckSum([cmd.databaseChecksum, cmdParam.databaseChecksum.requestChecksum])])
+		this.addCmdtoQueue([SOM, cmd.dualControllerStatusRequest, this.calcCheckSum([cmd.dualControllerStatusRequest])])
 		this.addCmdtoQueue([SOM, cmd.routerConfigurationRequest, this.calcCheckSum([cmd.routerConfigurationRequest])])
 		if (this.config.interrogate) {
 			//interrogate all destinations
@@ -61,7 +62,7 @@ module.exports = {
 	},
 
 	keepAlive() {
-		this.addCmdtoQueue(keepAliveMsg)
+		this.addCmdtoQueue([SOM, cmd.databaseChecksum, cmdParam.databaseChecksum.requestChecksum, this.calcCheckSum([cmd.databaseChecksum, cmdParam.databaseChecksum.requestChecksum])])
 		this.keepAliveTimer = setTimeout(() => {
 			this.keepAlive()
 		}, keepAliveInterval)
