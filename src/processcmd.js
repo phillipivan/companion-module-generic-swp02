@@ -5,15 +5,15 @@ module.exports = {
 		let msg = new Uint8Array(chunk)
 		let reply = msg[0] == SOM ? msg.subarray(1) : msg
 		this.log('debug', `response recieved: ${reply} reply length: ${reply.length}`)
-		let reference = []
-		for (let i = 0; i < reply.length - 1; i++) {
+/* 		let reference = []
+		for (let i = 0; i < reply.length - 2; i++) {
 			reference[i] = reply[i]
 		}
 		let refCheckSum = this.calcCheckSum(reference)
 		if (refCheckSum != reply[reply.length - 1]) {
 			this.log('warn', `invalid checksum returned. expected: ${refCheckSum} recieved: ${reply[reply.length - 1]}`)
 			return undefined
-		}
+		} */
 		let dstSrc = []
 		let varList = []
 		this.log('debug', `response command recieved: ${reply[0]}`)
@@ -23,14 +23,17 @@ module.exports = {
 				break
 			case cmd.interrogate:
 				if (reply.length != msgLength.interrogate) {
-					this.log('warn', `Unexpected Length. Expected: ${msgLength.interrogate} Recieved: ${reply.length}`)
+					this.log(
+						'warn',
+						` Interrogate. Unexpected Length. Expected: ${msgLength.interrogate} Recieved: ${reply.length}`
+					)
 					return undefined
 				}
 				this.log('warn', 'unit unexpectedly returned an interrogate')
 				break
 			case cmd.connect:
 				if (reply.length != msgLength.connect) {
-					this.log('warn', `Unexpected Length. Expected: ${msgLength.connect} Recieved: ${reply.length}`)
+					this.log('warn', ` Connect. Unexpected Length. Expected: ${msgLength.connect} Recieved: ${reply.length}`)
 					return undefined
 				}
 				this.log('warn', 'unit unexpectedly returned a connect')
@@ -38,7 +41,7 @@ module.exports = {
 			case cmd.tally:
 			case cmd.connected:
 				if (reply.length != msgLength.connected) {
-					this.log('warn', `Unexpected Length. Expected: ${msgLength.connected} Recieved: ${reply.length}`)
+					this.log('warn', `Tally. Unexpected Length. Expected: ${msgLength.connected} Recieved: ${reply.length}`)
 					return undefined
 				}
 				this.log('info', `tally/connected msg recieved: ${reply}`)

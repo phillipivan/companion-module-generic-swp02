@@ -20,7 +20,7 @@
 		"entrypoint": "../src/main.js"
 	},
 	"legacyIds": [],
-	"manufacturer": "Pro-Bel",
-	"products": ["Router"],
+	"manufacturer": "Generic",
+	"products": ["Probel Router SW P 02", "Snell Router SW P 02"],
 	"keywords": ["Hardware", "Router", "Video", "SDI"]
 }

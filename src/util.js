@@ -29,8 +29,8 @@ module.exports = {
 			return undefined
 		}
 		multiplier = parseInt(multiplier)
-		dst = parseInt(dst)
-		src = parseInt(src)
+		dst = parseInt(dst) + 1
+		src = parseInt(src) + 1
 		let srcMult = multiplier & 7
 		let dstMult = (multiplier - srcMult) / 16
 		return [dstMult * twoComp + dst, srcMult * twoComp + src]
