@@ -86,18 +86,18 @@ module.exports = function (self) {
 				dst = self.calcDivMod(dst - 1)
 				self.log(
 					'debug',
-					`som: ${SOM} cmd: ${cmd.interrogate} multiplier: ${dst[0] * 16} dst: ${dst[1]} checksum: ${self.calcCheckSum(
+					`som: ${SOM} cmd: ${cmd.interrogate} multiplier: ${dst[0] * 16} dst: ${dst[1]} checksum: ${self.calcCheckSum([
 						cmd.interrogate,
 						dst[0] * 16,
-						dst[1]
-					)}`
+						dst[1],
+					])}`
 				)
 				self.addCmdtoQueue([
 					SOM,
 					cmd.interrogate,
 					dst[0] * 16,
 					dst[1],
-					self.calcCheckSum(cmd.interrogate, dst[0] * 16, dst[1]),
+					self.calcCheckSum([cmd.interrogate, dst[0] * 16, dst[1]]),
 				])
 				const source = self.connections[dst]
 				return {
@@ -133,7 +133,7 @@ module.exports = function (self) {
 					cmd.connect,
 					dst[0] * 16,
 					dst[1],
-					self.calcCheckSum(cmd.interrogate, dst[0] * 16, dst[1]),
+					self.calcCheckSum([cmd.interrogate, dst[0] * 16, dst[1]]),
 				])
 			},
 			subscribe: async ({ options }) => {
@@ -190,7 +190,7 @@ module.exports = function (self) {
 					'debug',
 					`som: ${SOM} cmd: ${cmd.connectOnGo} multiplier: ${dst[0] * 16 + src[0]} dst: ${dst[1]} src: ${
 						src[1]
-					} checksum: ${self.calcCheckSum(cmd.connectOnGo, dst[0] * 16 + src[0], dst[1], src[1])}`
+					} checksum: ${self.calcCheckSum([cmd.connectOnGo, dst[0] * 16 + src[0], dst[1], src[1]])}`
 				)
 				self.addCmdtoQueue([
 					SOM,
@@ -198,7 +198,7 @@ module.exports = function (self) {
 					dst[0] * 16 + src[0],
 					dst[1],
 					src[1],
-					self.calcCheckSum(cmd.connectOnGo, dst[0] * 16 + src[0], dst[1], src[1]),
+					self.calcCheckSum([cmd.connectOnGo, dst[0] * 16 + src[0], dst[1], src[1]]),
 				])
 			},
 		},
@@ -217,9 +217,9 @@ module.exports = function (self) {
 			callback: async ({ options }) => {
 				self.log(
 					'debug',
-					`som: ${SOM} cmd: ${cmd.go} action: ${options.mode} checksum: ${self.calcCheckSum(cmd.go, options.mode)}`
+					`som: ${SOM} cmd: ${cmd.go} action: ${options.mode} checksum: ${self.calcCheckSum([cmd.go, options.mode])}`
 				)
-				self.addCmdtoQueue([SOM, cmd.go, options.mode, self.calcCheckSum(cmd.go, options.mode)])
+				self.addCmdtoQueue([SOM, cmd.go, options.mode, self.calcCheckSum([cmd.go, options.mode])])
 			},
 		},
 	})
