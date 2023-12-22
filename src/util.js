@@ -1,4 +1,4 @@
-const twoComp = 128
+const sevenBit = 128
 module.exports = {
 	calcCheckSum(msg) {
 		let sum = 0
@@ -10,7 +10,7 @@ module.exports = {
 				}
 				sum += msg[i]
 			}
-			return twoComp - (sum % twoComp)
+			return sum % sevenBit == 0 ? 0 : sevenBit - (sum % sevenBit)
 		}
 		this.log('warn', `calcCheckSum was not passed an array: ${msg}`)
 		return undefined
@@ -20,8 +20,8 @@ module.exports = {
 			this.log('warn', `calcDivMod has been passed a NaN: ${number}`)
 			return undefined
 		}
-		number = parseInt(number)
-		return [Math.floor(number / twoComp), number % twoComp]
+		number = parseInt(number - 1)
+		return [Math.floor(number / sevenBit), number % sevenBit]
 	},
 	returnDstSrc(multiplier, dst, src) {
 		if (isNaN(multiplier) || isNaN(dst) || isNaN(src)) {
@@ -33,6 +33,6 @@ module.exports = {
 		src = parseInt(src) + 1
 		let srcMult = multiplier & 7
 		let dstMult = (multiplier - srcMult) / 16
-		return [dstMult * twoComp + dst, srcMult * twoComp + src]
+		return [dstMult * sevenBit + dst, srcMult * sevenBit + src]
 	},
 }

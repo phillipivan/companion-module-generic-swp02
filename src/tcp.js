@@ -12,12 +12,17 @@ module.exports = {
 	},
 
 	async processCmdQueue() {
-		if (this.cmdQueue.length > 0) {
+		if (this.cmdQueue.length > 0 && !(this.waitOnAck && !this.clearToTx)) {
 			this.sendCommand(await this.cmdQueue.splice(0, 1))
+			this.cmdTimer = setTimeout(() => {
+				this.processCmdQueue()
+			}, msgDelay)
+			return true
 		}
 		this.cmdTimer = setTimeout(() => {
 			this.processCmdQueue()
-		}, msgDelay)
+		}, msgDelay / 2)
+		return false
 	},
 
 	async sendCommand(msg) {
@@ -29,6 +34,7 @@ module.exports = {
 				buffer[i] = msg[i]
 			}
 			if (this.socket !== undefined && this.socket.isConnected) {
+				this.clearToTx = false
 				this.socket.send(buffer)
 				return true
 			} else {
@@ -54,7 +60,7 @@ module.exports = {
 		if (this.config.interrogate) {
 			//interrogate all destinations
 			for (let i = 1; i <= this.config.dst; i++) {
-				let dst = this.calcDivMod(i - 1)
+				let dst = this.calcDivMod(i)
 				this.addCmdtoQueue([
 					SOM,
 					cmd.interrogate,
@@ -95,37 +101,34 @@ module.exports = {
 			})
 			this.socket.on('error', (err) => {
 				this.log('error', `Network error: ${err.message}`)
+				this.clearToTx = true
 				clearTimeout(this.keepAliveTimer)
 			})
 			this.socket.on('connect', () => {
 				this.log('info', `Connected to ${this.config.host}:${this.config.port}`)
+				this.clearToTx = true
 				this.queryOnConnect()
 				this.keepAliveTimer = setTimeout(() => {
 					this.keepAlive()
 				}, keepAliveInterval)
 			})
 			this.socket.on('data', (chunk) => {
-				if (Buffer.compare(chunk, receiveBuffer) != 0) {
-					this.log('debug', `data recieved: ${chunk}`)
-					receiveBuffer = Buffer.from(chunk)
-					let i = 0,
-						offset = 0
-					this.log('debug', `chunk recieved: ${receiveBuffer}`)
-					while ((i = receiveBuffer.indexOf(SOM, offset)) !== -1) {
-						this.log('debug', 'found SOM')
-						let nextSOM =
-							receiveBuffer.indexOf(SOM, offset + 1) == -1
-								? receiveBuffer.length - 1
-								: receiveBuffer.indexOf(SOM, offset + 1)
-						let line = Buffer.alloc(nextSOM - offset)
-						for (let j = 0; j < line.length; j++) {
-							line[j] = receiveBuffer[j + offset]
-						}
-						offset = i + 1
-						this.processCmd(line)
+				this.clearToTx = true
+				receiveBuffer = Buffer.from(chunk)
+				let i = 0,
+					offset = 0
+				this.log('debug', `chunk recieved: ${receiveBuffer}`)
+				while ((i = receiveBuffer.indexOf(SOM, offset)) !== -1) {
+					let nextSOM =
+						receiveBuffer.indexOf(SOM, offset + 1) == -1
+							? receiveBuffer.length - 1
+							: receiveBuffer.indexOf(SOM, offset + 1)
+					let line = Buffer.alloc(nextSOM - offset + 1)
+					for (let j = 0; j < line.length; j++) {
+						line[j] = receiveBuffer[j + offset]
 					}
-				} else {
-					this.log('warn', `Repeated: ${chunk.length} bytes`)
+					offset = i + 1
+					this.processCmd(line)
 				}
 			})
 		} else {

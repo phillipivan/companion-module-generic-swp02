@@ -17,6 +17,7 @@ class SW_P_02 extends InstanceBase {
 		this.keepAliveTimer = {}
 		this.cmdTimer = {}
 		this.cmdQueue = []
+		this.clearToTx = true
 	}
 	async init(config) {
 		this.updateStatus('Starting')

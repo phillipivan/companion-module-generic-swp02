@@ -35,14 +35,8 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: dst: ${dst} src: ${src}`)
 					return undefined
 				}
-				dst = self.calcDivMod(dst - 1)
-				src = self.calcDivMod(src - 1)
-				self.log(
-					'debug',
-					`som: ${SOM} cmd: ${cmd.connect} multiplier: ${dst[0] * 16 + src[0]} dst: ${dst[1]} src: ${
-						src[1]
-					} checksum: ${self.calcCheckSum([cmd.connect, dst[0] * 16 + src[0], dst[1], src[1]])}`
-				)
+				dst = self.calcDivMod(dst)
+				src = self.calcDivMod(src)
 				self.addCmdtoQueue([
 					SOM,
 					cmd.connect,
@@ -59,16 +53,8 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: ${dst}`)
 					return undefined
 				}
-				dst = self.calcDivMod(dst - 1)
+				dst = self.calcDivMod(dst)
 				let multiplier = dst[0] * 16
-				self.log(
-					'debug',
-					`som: ${SOM} cmd: ${cmd.interrogate} multiplier: ${multiplier} dst: ${dst[1]} checksum: ${self.calcCheckSum([
-						cmd.interrogate,
-						multiplier,
-						dst[1],
-					])}`
-				)
 				self.addCmdtoQueue([
 					SOM,
 					cmd.interrogate,
@@ -83,15 +69,8 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: ${dst}`)
 					return undefined
 				}
-				dst = self.calcDivMod(dst - 1)
-				self.log(
-					'debug',
-					`som: ${SOM} cmd: ${cmd.interrogate} multiplier: ${dst[0] * 16} dst: ${dst[1]} checksum: ${self.calcCheckSum([
-						cmd.interrogate,
-						dst[0] * 16,
-						dst[1],
-					])}`
-				)
+				const source = self.connections[dst]
+				dst = self.calcDivMod(dst)
 				self.addCmdtoQueue([
 					SOM,
 					cmd.interrogate,
@@ -99,7 +78,6 @@ module.exports = function (self) {
 					dst[1],
 					self.calcCheckSum([cmd.interrogate, dst[0] * 16, dst[1]]),
 				])
-				const source = self.connections[dst]
 				return {
 					...action.options,
 					src: source,
@@ -127,10 +105,10 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: dst: ${dst}}`)
 					return undefined
 				}
-				dst = self.calcDivMod(dst - 1)
+				dst = self.calcDivMod(dst)
 				self.addCmdtoQueue([
 					SOM,
-					cmd.connect,
+					cmd.interrogate,
 					dst[0] * 16,
 					dst[1],
 					self.calcCheckSum([cmd.interrogate, dst[0] * 16, dst[1]]),
@@ -142,7 +120,7 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: ${dst}`)
 					return undefined
 				}
-				dst = self.calcDivMod(dst - 1)
+				dst = self.calcDivMod(dst)
 				self.addCmdtoQueue([
 					SOM,
 					cmd.interrogate,
@@ -184,14 +162,8 @@ module.exports = function (self) {
 					self.log('warn', `an invalid varible has been passed: dst: ${dst} src: ${src}`)
 					return undefined
 				}
-				dst = self.calcDivMod(dst - 1)
-				src = self.calcDivMod(src - 1)
-				self.log(
-					'debug',
-					`som: ${SOM} cmd: ${cmd.connectOnGo} multiplier: ${dst[0] * 16 + src[0]} dst: ${dst[1]} src: ${
-						src[1]
-					} checksum: ${self.calcCheckSum([cmd.connectOnGo, dst[0] * 16 + src[0], dst[1], src[1]])}`
-				)
+				dst = self.calcDivMod(dst)
+				src = self.calcDivMod(src)
 				self.addCmdtoQueue([
 					SOM,
 					cmd.connectOnGo,
@@ -215,10 +187,6 @@ module.exports = function (self) {
 				},
 			],
 			callback: async ({ options }) => {
-				self.log(
-					'debug',
-					`som: ${SOM} cmd: ${cmd.go} action: ${options.mode} checksum: ${self.calcCheckSum([cmd.go, options.mode])}`
-				)
 				self.addCmdtoQueue([SOM, cmd.go, options.mode, self.calcCheckSum([cmd.go, options.mode])])
 			},
 		},
