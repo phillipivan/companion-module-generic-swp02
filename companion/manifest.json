@@ -1,9 +1,9 @@
 {
-	"id": "Generic-SW-P-02",
+	"id": "generic-swp02",
 	"name": "Generic-SW-P-02",
 	"shortname": "SW-P-02",
-	"description": "Bitfocus Companion module for router control via Pro Bel SW-P-02 protocol",
-	"version": "1.0.0",
+	"description": "Router control via Pro Bel SW-P-02 protocol",
+	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-generic-swp02.git",
 	"bugs": "https://github.com/bitfocus/companion-module-generic-swp02/issues",
@@ -21,6 +21,6 @@
 	},
 	"legacyIds": [],
 	"manufacturer": "Generic",
-	"products": ["Probel Router SW P 02", "Snell Router SW P 02"],
+	"products": ["SW-P-02", "Probel Router SW P 02", "Snell Router SW P 02"],
 	"keywords": ["Hardware", "Router", "Video", "SDI"]
 }
