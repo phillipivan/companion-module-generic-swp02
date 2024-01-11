@@ -1,6 +1,7 @@
 export const msgDelay = 20 // Always leave at least 20 ms open between commands
-export const cmdsPerMsg = 20 // Refer SW-P-2 Issue 37, Page 53
+export const cmdsPerMsg = 20 // Refer SW-P-2 Issue 37, Page 53. Not implemented.
 export const keepAliveInterval = 30000 //half the default time out interval: 60s
+export const timeOutInterval = 1000 //Cease waitOnAck and force clearToTx true if no response recieved
 export const SOM = 0xff
 //All commands referenced to Document SW-P-02 Issue 37, 07/09/17
 export const cmd = {
@@ -144,6 +145,7 @@ export const cmdParam = {
 		byte2: {
 			idleControllerOK: 0x00,
 			idleControllerFaulty: 0x01,
+			idleControllerUnknown: 0x02,
 		},
 	},
 }
@@ -171,4 +173,5 @@ export const msgLength = {
 	routerConfigurationRequest: 2,
 	routerConfigurationResponse1: 10,
 	routerConfigurationResponse2: 16,
+	dualControllerStatusResponse: 4,
 }

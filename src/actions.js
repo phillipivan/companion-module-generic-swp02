@@ -47,7 +47,6 @@ module.exports = function (self) {
 				])
 			},
 			subscribe: async ({ options }) => {
-				//add cmd to interrogate destination
 				let dst = parseInt(await self.parseVariablesInString(options.dst))
 				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
 					self.log('warn', `an invalid varible has been passed: ${dst}`)
@@ -186,7 +185,7 @@ module.exports = function (self) {
 					default: cmdParam.go.set,
 				},
 			],
-			callback: async ({ options }) => {
+			callback: ({ options }) => {
 				self.addCmdtoQueue([SOM, cmd.go, options.mode, self.calcCheckSum([cmd.go, options.mode])])
 			},
 		},

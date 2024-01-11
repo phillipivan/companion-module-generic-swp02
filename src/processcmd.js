@@ -16,7 +16,6 @@ module.exports = {
 		}
 		let dstSrc = []
 		let varList = []
-		this.log('debug', `response command recieved: ${reply[0]}`)
 		switch (reply[0]) {
 			case cmd.databaseChecksum:
 				this.log('info', `db checksum recieved ${reply}`)
@@ -186,6 +185,36 @@ module.exports = {
 			case cmd.dualControllerStatusRequest:
 				break
 			case cmd.dualControllerStatusResponse:
+				if (reply.length != msgLength.dualControllerStatusResponse) {
+					this.log(
+						'warn',
+						` dualControllerStatusResponse. Unexpected Length. Expected: ${msgLength.dualControllerStatusResponse} Recieved: ${reply.length}`
+					)
+					return undefined
+				}
+				if (reply[1] & 1) {
+					this.log('info', 'Slave is Active')
+				} else {
+					this.log('info', 'Master is Active')
+				}
+				if (reply[1] & 2) {
+					this.log('info', 'Active Status: Active')
+				} else {
+					this.log('info', 'Active Status: Inactive')
+				}
+				switch (reply[2]) {
+					case cmdParam.dualControllerStatusResponse.byte2.idleControllerOK:
+						this.log('info', 'Idle controller OK')
+						break
+					case cmdParam.dualControllerStatusResponse.byte2.idleControllerFaulty:
+						this.log('warn', 'Idle controller missing / faulty')
+						break
+					case cmdParam.dualControllerStatusResponse.byte2.idleControllerUnknown:
+						this.log('warn', 'Idle controller status unknown')
+						break
+					default:
+						this.log('warn', `Unexpected idle controller status response ${reply[2]}`)
+				}
 				break
 			case cmd.extendedInterrogate:
 				if (reply.length != msgLength.extendedInterrogate) {

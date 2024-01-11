@@ -16,6 +16,7 @@ class SW_P_02 extends InstanceBase {
 		Object.assign(this, { ...config, ...tcp, ...processCmd, ...choices, ...util })
 		this.keepAliveTimer = {}
 		this.cmdTimer = {}
+		this.timeOutTimer = {}
 		this.cmdQueue = []
 		this.clearToTx = true
 	}
@@ -37,6 +38,8 @@ class SW_P_02 extends InstanceBase {
 		this.log('debug', `destroy. ID: ${this.id}`)
 		clearTimeout(this.keepAliveTimer)
 		clearTimeout(this.cmdTimer)
+		this.stopTimeOut()
+		this.timeOutTimer = null
 		this.keepAliveTimer = null
 		this.cmdTimer = null
 		if (this.socket) {

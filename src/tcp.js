@@ -1,19 +1,19 @@
 const { InstanceStatus, TCPHelper } = require('@companion-module/base')
-const { msgDelay, SOM, cmd, cmdParam, keepAliveInterval } = require('./consts.js')
+const { msgDelay, SOM, cmd, cmdParam, keepAliveInterval, timeOutInterval } = require('./consts.js')
 
 module.exports = {
-	async addCmdtoQueue(msg) {
+	addCmdtoQueue(msg) {
 		if (msg !== undefined && Array.isArray(msg)) {
-			await this.cmdQueue.push(msg)
+			this.cmdQueue.push(msg)
 			return true
 		}
 		this.log('warn', `Invalid command: ${msg}`)
 		return false
 	},
 
-	async processCmdQueue() {
+	processCmdQueue() {
 		if (this.cmdQueue.length > 0 && !(this.waitOnAck && !this.clearToTx)) {
-			this.sendCommand(await this.cmdQueue.splice(0, 1))
+			this.sendCommand(this.cmdQueue.splice(0, 1))
 			this.cmdTimer = setTimeout(() => {
 				this.processCmdQueue()
 			}, msgDelay)
@@ -25,29 +25,42 @@ module.exports = {
 		return false
 	},
 
-	async sendCommand(msg) {
+	timeOut() {
+		this.clearToTx = true
+	},
+
+	startTimeOut() {
+		this.clearToTx = false
+		this.timeOutTimer = setTimeout(() => {
+			this.timeOut()
+		}, timeOutInterval)
+	},
+
+	stopTimeOut() {
+		this.clearToTx = true
+		clearTimeout(this.timeOutTimer)
+	},
+
+	sendCommand(msg) {
 		msg = msg.toString().split(',')
 		if (msg !== undefined && Array.isArray(msg)) {
-			//this.log('debug', `message: ${msg.toString()} message length: ${msg.length}`)
-			let buffer = new Uint8Array(msg.length)
-			for (let i = 0; i < msg.length; i++) {
-				buffer[i] = msg[i]
-			}
+			this.log('debug', `sending message: ${msg.toString()} message length: ${msg.length}`)
+			let buffer = Buffer.from(msg)
 			if (this.socket !== undefined && this.socket.isConnected) {
-				this.clearToTx = false
+				this.startTimeOut()
 				this.socket.send(buffer)
 				return true
 			} else {
 				this.log('warn', `Socket not connected, tried to send: ${buffer}`)
 			}
 		} else {
-			this.log('warn', 'Command undefined')
+			this.log('warn', `Invalid command: ${msg.toString()}`)
 		}
 		return false
 	},
 
 	//queries made on initial connection.
-	async queryOnConnect() {
+	queryOnConnect() {
 		//the queries probel general switcher makes upon connecting
 		this.addCmdtoQueue([
 			SOM,
@@ -101,23 +114,24 @@ module.exports = {
 			})
 			this.socket.on('error', (err) => {
 				this.log('error', `Network error: ${err.message}`)
-				this.clearToTx = true
+				this.stopTimeOut()
 				clearTimeout(this.keepAliveTimer)
 			})
 			this.socket.on('connect', () => {
 				this.log('info', `Connected to ${this.config.host}:${this.config.port}`)
-				this.clearToTx = true
+				receiveBuffer = Buffer.from('')
+				this.stopTimeOut()
 				this.queryOnConnect()
 				this.keepAliveTimer = setTimeout(() => {
 					this.keepAlive()
 				}, keepAliveInterval)
 			})
 			this.socket.on('data', (chunk) => {
-				this.clearToTx = true
+				this.stopTimeOut()
+				//this.log('debug', `chunk recieved: ${chunk}`)
 				receiveBuffer = Buffer.from(chunk)
 				let i = 0,
 					offset = 0
-				this.log('debug', `chunk recieved: ${receiveBuffer}`)
 				while ((i = receiveBuffer.indexOf(SOM, offset)) !== -1) {
 					let nextSOM =
 						receiveBuffer.indexOf(SOM, offset + 1) == -1
@@ -130,6 +144,8 @@ module.exports = {
 					offset = i + 1
 					this.processCmd(line)
 				}
+				//receiveBuffer = Buffer.from('')
+				//receiveBuffer = receiveBuffer.subarray(offset)
 			})
 		} else {
 			this.updateStatus(InstanceStatus.BadConfig)

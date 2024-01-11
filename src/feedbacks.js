@@ -1,4 +1,5 @@
 const { combineRgb } = require('@companion-module/base')
+const { SOM, cmd } = require('./consts.js')
 
 module.exports = async function (self) {
 	self.setFeedbackDefinitions({
@@ -29,11 +30,18 @@ module.exports = async function (self) {
 			callback: ({ options }) => {
 				return self.connections[options.dst] == options.src
 			},
-			subscribe: async () => {
-				//add cmd to interrogate destination
-				//self.addCmdtoQueue(cmd)
+			subscribe: ({ options }) => {
+				let dst = self.calcDivMod(options.dst)
+				let multiplier = dst[0] * 16
+				self.addCmdtoQueue([
+					SOM,
+					cmd.interrogate,
+					multiplier,
+					dst[1],
+					self.calcCheckSum([cmd.interrogate, multiplier, dst[1]]),
+				])
 			},
-			learn: async (feedback) => {
+			learn: (feedback) => {
 				const source = self.connections[feedback.options.dst]
 				return {
 					...feedback.options,
