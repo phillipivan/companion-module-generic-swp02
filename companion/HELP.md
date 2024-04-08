@@ -2,10 +2,14 @@
 
 Implementation referenced to Document: SW-P-02 Issue 37. 07/09/2017.
 
-This module implements the basic router controls of SW P 02. There are many other commands that are part of the SW P 02 specification, most are device specific or not widely supported. If you would like other commands to be implemented, please create an issue to request it.
+This module implements the basic router controls of SW P 02. 
 
 ## Configuration
-Enter the IP address, port and source and destination count. Wait on Ack will force companion to wait for a response before sending the next command in the queue. Interrogate on Connect will interrogate all destinations when a connection is established.
+Enter the IP address, port and source and destination count.
+
+Wait on Ack will force companion to wait for a response before sending the next command in the queue. 
+
+Interrogate on Connect will interrogate all destinations when a connection is established.
 
 ## Actions
 - **INTERROGATE** 
@@ -23,6 +27,7 @@ Enter the IP address, port and source and destination count. Wait on Ack will fo
 
 ### Version 1.0.3
 - Fix typos
+- Update companion-module-tools
 
 ### Version 1.0.2
 - Decode & Write Dual Controller Status Response to logs
