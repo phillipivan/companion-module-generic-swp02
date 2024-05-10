@@ -21,7 +21,7 @@ class SW_P_02 extends InstanceBase {
 		this.clearToTx = true
 	}
 	async init(config) {
-		this.updateStatus('Starting')
+		this.updateStatus(InstanceStatus.Connecting)
 		this.config = config
 		this.cmdTimer = setTimeout(() => {
 			this.processCmdQueue()
