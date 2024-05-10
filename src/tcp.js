@@ -106,7 +106,7 @@ module.exports = {
 		if (this.config.host) {
 			this.log('debug', 'Creating New Socket')
 
-			this.updateStatus(`Connecting to Router: ${this.config.host}:${this.config.port}`)
+			this.updateStatus(InstanceStatus.Connecting, `Connecting to Router: ${this.config.host}:${this.config.port}`)
 			this.socket = new TCPHelper(this.config.host, this.config.port)
 
 			this.socket.on('status_change', (status, message) => {
@@ -114,11 +114,13 @@ module.exports = {
 			})
 			this.socket.on('error', (err) => {
 				this.log('error', `Network error: ${err.message}`)
+				this.updateStatus(InstanceStatus.ConnectionFailure, err.message)
 				this.stopTimeOut()
 				clearTimeout(this.keepAliveTimer)
 			})
 			this.socket.on('connect', () => {
 				this.log('info', `Connected to ${this.config.host}:${this.config.port}`)
+				this.updateStatus(InstanceStatus.Ok, `Connected to ${this.config.host}`)
 				receiveBuffer = Buffer.from('')
 				this.stopTimeOut()
 				this.queryOnConnect()
