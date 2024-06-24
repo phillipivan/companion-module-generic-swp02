@@ -69,6 +69,11 @@ class SW_P_02 extends InstanceBase {
 		}
 	}
 
+	// Track whether actions are being recorded
+	handleStartStopRecordActions(isRecording) {
+		this.isRecordingActions = isRecording
+	}
+
 	updateActions() {
 		UpdateActions(this)
 	}
