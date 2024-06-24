@@ -53,6 +53,15 @@ module.exports = {
 				varList[`dst${dstSrc[0]}`] = this.connections[dstSrc[0]]
 				this.checkFeedbacks('checkCrosspoint')
 				this.setVariableValues(varList)
+				if (this.isRecordingActions) {
+					this.recordAction(
+						{
+							actionId: 'connect',
+							options: { dst: dstSrc[0], src: dstSrc[1] },
+						},
+						`connect ${dstSrc[0]}`
+					)
+				}
 				break
 			case cmd.connectOnGo:
 				if (reply.length != msgLength.connectOnGo) {
