@@ -30,12 +30,21 @@ export default async function (self) {
 				},
 			],
 			callback: async (feedback, context) => {
-				const src = await context.parseVariablesInString(feedback.options.src)
-				const dst = await context.parseVariablesInString(feedback.options.dst)
+				const src = parseInt(await context.parseVariablesInString(feedback.options.src))
+				const dst = parseInt(await context.parseVariablesInString(feedback.options.dst))
+				if (isNaN(dst) || dst < 1 || dst > 1024) {
+					self.log('warn', `invalid dest provided ${dst} from ${feedback.options.dst}`)
+					return undefined
+				}
 				return self.connections[dst] === src
 			},
 			subscribe: async (feedback, context) => {
-				const dst = self.calcDivMod(await context.parseVariablesInString(feedback.options.dst))
+				const dest = parseInt(await context.parseVariablesInString(feedback.options.dst))
+				if (isNaN(dest) || dest < 1 || dest > 1024) {
+					self.log('warn', `invalid dest provided ${dest} from ${feedback.options.dst}`)
+					return undefined
+				}
+				const dst = self.calcDivMod(dest)
 				const multiplier = dst[0] * 16
 				self.addCmdtoQueue([
 					SOM,
@@ -46,7 +55,12 @@ export default async function (self) {
 				])
 			},
 			learn: async (feedback, context) => {
-				const source = self.connections[await context.parseVariablesInString(feedback.options.dst)]
+				const dst = parseInt(await context.parseVariablesInString(feedback.options.dst))
+				if (isNaN(dst) || dst < 1 || dst > 1024) {
+					self.log('warn', `invalid dest provided ${dst} from ${feedback.options.dst}`)
+					return undefined
+				}
+				const source = self.connections[dst]
 				return {
 					...feedback.options,
 					src: source,
