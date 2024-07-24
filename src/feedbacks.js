@@ -1,7 +1,7 @@
-const { combineRgb } = require('@companion-module/base')
-const { SOM, cmd } = require('./consts.js')
+import { combineRgb } from '@companion-module/base'
+import { SOM, cmd } from './consts.js'
 
-module.exports = async function (self) {
+export default async function (self) {
 	self.setFeedbackDefinitions({
 		checkCrosspoint: {
 			name: 'Crosspoint',
@@ -18,6 +18,7 @@ module.exports = async function (self) {
 					label: 'Destination',
 					default: 1,
 					choices: self.destinations,
+					allowCustom: true,
 				},
 				{
 					id: 'src',
@@ -25,14 +26,26 @@ module.exports = async function (self) {
 					label: 'Source',
 					default: 1,
 					choices: self.sources,
+					allowCustom: true,
 				},
 			],
-			callback: ({ options }) => {
-				return self.connections[options.dst] == options.src
+			callback: async (feedback, context) => {
+				const src = parseInt(await context.parseVariablesInString(feedback.options.src))
+				const dst = parseInt(await context.parseVariablesInString(feedback.options.dst))
+				if (isNaN(dst) || dst < 1 || dst > 1024) {
+					self.log('warn', `invalid dest provided ${dst} from ${feedback.options.dst}`)
+					return undefined
+				}
+				return self.connections[dst] === src
 			},
-			subscribe: ({ options }) => {
-				let dst = self.calcDivMod(options.dst)
-				let multiplier = dst[0] * 16
+			subscribe: async (feedback, context) => {
+				const dest = parseInt(await context.parseVariablesInString(feedback.options.dst))
+				if (isNaN(dest) || dest < 1 || dest > 1024) {
+					self.log('warn', `invalid dest provided ${dest} from ${feedback.options.dst}`)
+					return undefined
+				}
+				const dst = self.calcDivMod(dest)
+				const multiplier = dst[0] * 16
 				self.addCmdtoQueue([
 					SOM,
 					cmd.interrogate,
@@ -41,8 +54,13 @@ module.exports = async function (self) {
 					self.calcCheckSum([cmd.interrogate, multiplier, dst[1]]),
 				])
 			},
-			learn: (feedback) => {
-				const source = self.connections[feedback.options.dst]
+			learn: async (feedback, context) => {
+				const dst = parseInt(await context.parseVariablesInString(feedback.options.dst))
+				if (isNaN(dst) || dst < 1 || dst > 1024) {
+					self.log('warn', `invalid dest provided ${dst} from ${feedback.options.dst}`)
+					return undefined
+				}
+				const source = self.connections[dst]
 				return {
 					...feedback.options,
 					src: source,

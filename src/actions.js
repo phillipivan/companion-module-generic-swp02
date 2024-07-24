@@ -1,38 +1,35 @@
-//const { Regex } = require('@companion-module/base')
-const { SOM, cmd, cmdParam } = require('./consts.js')
+import { SOM, cmd, cmdParam } from './consts.js'
 
-module.exports = function (self) {
+export default function (self) {
+	const optionDst = {
+		type: 'dropdown',
+		id: 'dst',
+		label: 'Destination',
+		choices: self.destinations,
+		default: 1,
+		allowCustom: true,
+		tooltip: 'Variable must return an integer',
+	}
+	const optionSrc = {
+		type: 'dropdown',
+		id: 'src',
+		label: 'Source',
+		choices: self.sources,
+		default: 1,
+		allowCustom: true,
+		tooltip: 'Variable must return an integer',
+	}
+
 	self.setActionDefinitions({
 		connect: {
 			name: 'Connect',
 			description: 'Connect a crosspoint',
-			options: [
-				{
-					type: 'dropdown',
-					id: 'dst',
-					label: 'Destination',
-					choices: self.destinations,
-					default: 1,
-					useVariables: true,
-					allowCustom: true,
-					tooltip: 'Varible must return an integer',
-				},
-				{
-					type: 'dropdown',
-					id: 'src',
-					label: 'Source',
-					choices: self.sources,
-					default: 1,
-					useVariables: true,
-					allowCustom: true,
-					tooltip: 'Varible must return an integer',
-				},
-			],
+			options: [optionDst, optionSrc],
 			callback: async ({ options }) => {
 				let dst = parseInt(await self.parseVariablesInString(options.dst))
 				let src = parseInt(await self.parseVariablesInString(options.src))
 				if (isNaN(dst) || dst < 1 || dst > self.config.dst || isNaN(src) || src < 1 || src > self.config.src) {
-					self.log('warn', `an invalid varible has been passed: dst: ${dst} src: ${src}`)
+					self.log('warn', `an invalid variable has been passed: dst: ${dst} src: ${src}`)
 					return undefined
 				}
 				dst = self.calcDivMod(dst)
@@ -49,7 +46,7 @@ module.exports = function (self) {
 			subscribe: async ({ options }) => {
 				let dst = parseInt(await self.parseVariablesInString(options.dst))
 				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
-					self.log('warn', `an invalid varible has been passed: ${dst}`)
+					self.log('warn', `an invalid variable has been passed: ${dst}`)
 					return undefined
 				}
 				dst = self.calcDivMod(dst)
@@ -65,7 +62,7 @@ module.exports = function (self) {
 			learn: async (action) => {
 				let dst = parseInt(await self.parseVariablesInString(action.options.dst))
 				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
-					self.log('warn', `an invalid varible has been passed: ${dst}`)
+					self.log('warn', `an invalid variable has been passed: ${dst}`)
 					return undefined
 				}
 				const source = self.connections[dst]
@@ -86,22 +83,11 @@ module.exports = function (self) {
 		interrogate: {
 			name: 'Interrogate',
 			description: 'Interrogate a destination',
-			options: [
-				{
-					type: 'dropdown',
-					id: 'dst',
-					label: 'Destination',
-					choices: self.destinations,
-					default: 1,
-					useVariables: true,
-					allowCustom: true,
-					tooltip: 'Varible must return an integer',
-				},
-			],
+			options: [optionDst],
 			callback: async ({ options }) => {
 				let dst = parseInt(await self.parseVariablesInString(options.dst))
 				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
-					self.log('warn', `an invalid varible has been passed: dst: ${dst}}`)
+					self.log('warn', `an invalid variable has been passed: dst: ${dst}}`)
 					return undefined
 				}
 				dst = self.calcDivMod(dst)
@@ -116,7 +102,7 @@ module.exports = function (self) {
 			subscribe: async ({ options }) => {
 				let dst = parseInt(await self.parseVariablesInString(options.dst))
 				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
-					self.log('warn', `an invalid varible has been passed: ${dst}`)
+					self.log('warn', `an invalid variable has been passed: ${dst}`)
 					return undefined
 				}
 				dst = self.calcDivMod(dst)
@@ -132,33 +118,12 @@ module.exports = function (self) {
 		connectOnGo: {
 			name: 'Connect on Go',
 			description: 'Prepare a crosspoint',
-			options: [
-				{
-					type: 'dropdown',
-					id: 'dst',
-					label: 'Destination',
-					choices: self.destinations,
-					default: 1,
-					useVariables: true,
-					allowCustom: true,
-					tooltip: 'Varible must return an integer',
-				},
-				{
-					type: 'dropdown',
-					id: 'src',
-					label: 'Source',
-					choices: self.sources,
-					default: 1,
-					useVariables: true,
-					allowCustom: true,
-					tooltip: 'Varible must return an integer',
-				},
-			],
+			options: [optionDst, optionSrc],
 			callback: async ({ options }) => {
 				let dst = parseInt(await self.parseVariablesInString(options.dst))
 				let src = parseInt(await self.parseVariablesInString(options.src))
 				if (isNaN(dst) || dst < 1 || dst > self.config.dst || isNaN(src) || src < 1 || src > self.config.src) {
-					self.log('warn', `an invalid varible has been passed: dst: ${dst} src: ${src}`)
+					self.log('warn', `an invalid variable has been passed: dst: ${dst} src: ${src}`)
 					return undefined
 				}
 				dst = self.calcDivMod(dst)
