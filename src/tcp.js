@@ -12,7 +12,7 @@ export function addCmdtoQueue(msg) {
 
 export function processCmdQueue() {
 	if (this.cmdQueue.length > 0 && !(this.waitOnAck && !this.clearToTx)) {
-		this.sendCommand(this.cmdQueue.splice(0, 1))
+		this.sendCommand(this.cmdQueue.shift())
 		this.cmdTimer = setTimeout(() => {
 			this.processCmdQueue()
 		}, msgDelay)
@@ -41,7 +41,6 @@ export function stopTimeOut() {
 }
 
 export function sendCommand(msg) {
-	msg = msg.toString().split(',')
 	if (msg !== undefined && Array.isArray(msg)) {
 		this.log('debug', `sending message: ${msg.toString()} message length: ${msg.length}`)
 		const buffer = Buffer.from(msg)
