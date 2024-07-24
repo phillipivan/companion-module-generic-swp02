@@ -33,7 +33,7 @@ export function returnDstSrc(multiplier, dst, src) {
 	multiplier = parseInt(multiplier)
 	dst = parseInt(dst) + 1
 	src = parseInt(src) + 1
-	let srcMult = multiplier & 7
-	let dstMult = (multiplier - srcMult) / 16
+	const srcMult = multiplier & 7
+	const dstMult = (multiplier - srcMult) / 16
 	return [dstMult * sevenBit + dst, srcMult * sevenBit + src]
 }

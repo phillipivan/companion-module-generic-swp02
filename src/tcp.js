@@ -44,7 +44,7 @@ export function sendCommand(msg) {
 	msg = msg.toString().split(',')
 	if (msg !== undefined && Array.isArray(msg)) {
 		this.log('debug', `sending message: ${msg.toString()} message length: ${msg.length}`)
-		let buffer = Buffer.from(msg)
+		const buffer = Buffer.from(msg)
 		if (this.socket !== undefined && this.socket.isConnected) {
 			this.startTimeOut()
 			this.socket.send(buffer)

@@ -1,14 +1,14 @@
 import { cmd, msgLength, cmdParam, extendedCommandSet, SOM } from './consts.js'
 
 export function processCmd(chunk) {
-	let msg = new Uint8Array(chunk)
-	let reply = msg[0] == SOM ? msg.subarray(1) : msg
+	const msg = new Uint8Array(chunk)
+	const reply = msg[0] == SOM ? msg.subarray(1) : msg
 	this.log('debug', `response recieved: ${reply} reply length: ${reply.length}`)
 	let reference = []
 	for (let i = 0; i < reply.length - 1; i++) {
 		reference[i] = reply[i]
 	}
-	let refCheckSum = this.calcCheckSum(reference)
+	const refCheckSum = this.calcCheckSum(reference)
 	if (refCheckSum != reply[reply.length - 1]) {
 		this.log('warn', `invalid checksum returned. expected: ${refCheckSum} recieved: ${reply[reply.length - 1]}`)
 		return undefined
