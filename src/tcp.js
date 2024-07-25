@@ -80,6 +80,9 @@ export function queryOnConnect() {
 				this.calcCheckSum([cmd.interrogate, dst[0] * 16, dst[1]]),
 			])
 		}
+	} else {
+		this.subscribeActions()
+		this.subscribeFeedbacks()
 	}
 }
 

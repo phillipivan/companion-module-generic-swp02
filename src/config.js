@@ -1,13 +1,12 @@
 import { Regex } from '@companion-module/base'
 
 export async function configUpdated(config) {
-	//let oldConfig = this.config
 	this.config = config
 	this.initVariables()
+	await this.updateVariableDefinitions()
+	this.updateVariableValues()
 	this.updateActions()
 	this.updateFeedbacks()
-	this.updateVariableDefinitions()
-	this.updateVariableValues()
 	this.initTCP()
 }
 // Return config fields for web config
