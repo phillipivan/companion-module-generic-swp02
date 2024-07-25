@@ -96,7 +96,7 @@ export function keepAlive() {
 }
 
 export function initTCP() {
-	let receiveBuffer = Buffer.from('')
+	this.receiveBuffer = Buffer.from('')
 	if (this.socket !== undefined) {
 		this.socket.destroy()
 		delete this.socket
@@ -119,7 +119,7 @@ export function initTCP() {
 		this.socket.on('connect', () => {
 			this.log('info', `Connected to ${this.config.host}:${this.config.port}`)
 			this.updateStatus(InstanceStatus.Ok, `Connected to ${this.config.host}`)
-			receiveBuffer = Buffer.from('')
+			this.receiveBuffer = Buffer.from('')
 			this.stopTimeOut()
 			this.queryOnConnect()
 			this.keepAliveTimer = setTimeout(() => {
@@ -129,23 +129,27 @@ export function initTCP() {
 		this.socket.on('data', (chunk) => {
 			this.stopTimeOut()
 			//this.log('debug', `chunk recieved: ${chunk}`)
-			receiveBuffer = Buffer.from(chunk)
+			this.receiveBuffer = Buffer.concat([this.receiveBuffer, chunk])
 			let i = 0,
-				offset = 0
-			while ((i = receiveBuffer.indexOf(SOM, offset)) !== -1) {
+				offset = 1
+			while ((i = this.receiveBuffer.indexOf(SOM, offset)) !== -1) {
 				let nextSOM =
-					receiveBuffer.indexOf(SOM, offset + 1) == -1
-						? receiveBuffer.length - 1
-						: receiveBuffer.indexOf(SOM, offset + 1)
+					this.receiveBuffer.indexOf(SOM, offset + 1) == -1
+						? this.receiveBuffer.length - 1
+						: this.receiveBuffer.indexOf(SOM, offset + 1)
 				let line = Buffer.alloc(nextSOM - offset + 1)
 				for (let j = 0; j < line.length; j++) {
-					line[j] = receiveBuffer[j + offset]
+					line[j] = this.receiveBuffer[j + offset]
 				}
 				offset = i + 1
 				this.processCmd(line)
 			}
-			//receiveBuffer = Buffer.from('')
-			//receiveBuffer = receiveBuffer.subarray(offset)
+			this.receiveBuffer = this.receiveBuffer.subarray(offset)
+			if (this.receiveBuffer.length > 0) {
+				if (this.processCmd(this.receiveBuffer) !== undefined) {
+					this.receiveBuffer = Buffer.from('')
+				}
+			}
 		})
 	} else {
 		this.updateStatus(InstanceStatus.BadConfig)

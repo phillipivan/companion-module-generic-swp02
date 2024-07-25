@@ -11,7 +11,7 @@ export async function configUpdated(config) {
 	this.initTCP()
 }
 // Return config fields for web config
-export async function getConfigFields() {
+export function getConfigFields() {
 	return [
 		{
 			type: 'textinput',
