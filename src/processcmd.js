@@ -3,7 +3,7 @@ import { cmd, msgLength, cmdParam, extendedCommandSet, SOM } from './consts.js'
 export function processCmd(chunk) {
 	const msg = new Uint8Array(chunk)
 	const reply = msg[0] == SOM ? msg.subarray(1) : msg
-	this.log('debug', `response recieved: ${reply} reply length: ${reply.length}`)
+	//this.log('debug', `response recieved: ${reply} reply length: ${reply.length}`)
 	let reference = []
 	for (let i = 0; i < reply.length - 1; i++) {
 		reference[i] = reply[i]
@@ -382,4 +382,5 @@ export function processCmd(chunk) {
 		default:
 			this.log('warn', `Unexpected response from unit: ${reply.toString()}`)
 	}
+	return true
 }

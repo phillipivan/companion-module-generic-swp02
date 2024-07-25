@@ -32,16 +32,23 @@ export default async function (self) {
 			callback: async (feedback, context) => {
 				const src = parseInt(await context.parseVariablesInString(feedback.options.src))
 				const dst = parseInt(await context.parseVariablesInString(feedback.options.dst))
-				if (isNaN(dst) || dst < 1 || dst > 1024) {
-					self.log('warn', `invalid dest provided ${dst} from ${feedback.options.dst}`)
+				if (isNaN(dst) || dst < 0 || dst > self.config.dst) {
+					self.log(
+						'warn',
+						`feedback:checkCrosspoint:callback - invalid dest provided ${dst} from ${feedback.options.dst}`
+					)
+					return undefined
+				} else if (dst === 0) {
 					return undefined
 				}
 				return self.connections[dst] === src
 			},
 			subscribe: async (feedback, context) => {
 				const dest = parseInt(await context.parseVariablesInString(feedback.options.dst))
-				if (isNaN(dest) || dest < 1 || dest > 1024) {
-					self.log('warn', `invalid dest provided ${dest} from ${feedback.options.dst}`)
+				if (isNaN(dest) || dest < 0 || dest > self.config.dst) {
+					self.log('warn', `feedback:checkCrosspoint:subscribe - ${dest} from ${feedback.options.dst}`)
+					return undefined
+				} else if (dest === 0) {
 					return undefined
 				}
 				const dst = self.calcDivMod(dest)
@@ -56,8 +63,10 @@ export default async function (self) {
 			},
 			learn: async (feedback, context) => {
 				const dst = parseInt(await context.parseVariablesInString(feedback.options.dst))
-				if (isNaN(dst) || dst < 1 || dst > 1024) {
-					self.log('warn', `invalid dest provided ${dst} from ${feedback.options.dst}`)
+				if (isNaN(dst) || dst < 0 || dst > self.config.dst) {
+					self.log('warn', `feedback:checkCrosspoint:learn - invalid dest provided ${dst} from ${feedback.options.dst}`)
+					return undefined
+				} else if (dst === 0) {
 					return undefined
 				}
 				const source = self.connections[dst]
