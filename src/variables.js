@@ -3,5 +3,5 @@ export default async function (self) {
 	for (let i = 1; i <= self.config.dst; i++) {
 		varList.push({ variableId: `dst${i}`, name: `Destination ${i}` })
 	}
-	self.setVariableDefinitions(varList)
+	await self.setVariableDefinitions(varList)
 }

@@ -45,9 +45,11 @@ export default function (self) {
 			},
 			subscribe: async ({ options }) => {
 				let dst = parseInt(await self.parseVariablesInString(options.dst))
-				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
+				if (isNaN(dst) || dst < 0 || dst > self.config.dst) {
 					self.log('warn', `an invalid variable has been passed: ${dst}`)
 					return undefined
+				} else if (dst === 0) {
+					return
 				}
 				dst = self.calcDivMod(dst)
 				let multiplier = dst[0] * 16
@@ -61,9 +63,11 @@ export default function (self) {
 			},
 			learn: async (action) => {
 				let dst = parseInt(await self.parseVariablesInString(action.options.dst))
-				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
+				if (isNaN(dst) || dst < 0 || dst > self.config.dst) {
 					self.log('warn', `an invalid variable has been passed: ${dst}`)
 					return undefined
+				} else if (dst === 0) {
+					return
 				}
 				const source = self.connections[dst]
 				dst = self.calcDivMod(dst)
@@ -86,9 +90,11 @@ export default function (self) {
 			options: [optionDst],
 			callback: async ({ options }) => {
 				let dst = parseInt(await self.parseVariablesInString(options.dst))
-				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
+				if (isNaN(dst) || dst < 0 || dst > self.config.dst) {
 					self.log('warn', `an invalid variable has been passed: dst: ${dst}}`)
 					return undefined
+				} else if (dst === 0) {
+					return
 				}
 				dst = self.calcDivMod(dst)
 				self.addCmdtoQueue([
@@ -101,9 +107,11 @@ export default function (self) {
 			},
 			subscribe: async ({ options }) => {
 				let dst = parseInt(await self.parseVariablesInString(options.dst))
-				if (isNaN(dst) || dst < 1 || dst > self.config.dst) {
+				if (isNaN(dst) || dst < 0 || dst > self.config.dst) {
 					self.log('warn', `an invalid variable has been passed: ${dst}`)
 					return undefined
+				} else if (dst === 0) {
+					return
 				}
 				dst = self.calcDivMod(dst)
 				self.addCmdtoQueue([
@@ -122,9 +130,11 @@ export default function (self) {
 			callback: async ({ options }) => {
 				let dst = parseInt(await self.parseVariablesInString(options.dst))
 				let src = parseInt(await self.parseVariablesInString(options.src))
-				if (isNaN(dst) || dst < 1 || dst > self.config.dst || isNaN(src) || src < 1 || src > self.config.src) {
+				if (isNaN(dst) || dst < 0 || dst > self.config.dst || isNaN(src) || src < 0 || src > self.config.src) {
 					self.log('warn', `an invalid variable has been passed: dst: ${dst} src: ${src}`)
 					return undefined
+				} else if (dst === 0 || src === 0) {
+					return
 				}
 				dst = self.calcDivMod(dst)
 				src = self.calcDivMod(src)

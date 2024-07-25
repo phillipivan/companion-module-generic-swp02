@@ -27,10 +27,10 @@ class SW_P_02 extends InstanceBase {
 			this.processCmdQueue()
 		}, msgDelay)
 		this.initVariables()
+		await this.updateVariableDefinitions() // export variable definitions
+		this.updateVariableValues()
 		this.updateActions() // export actions
 		this.updateFeedbacks() // export feedbacks
-		this.updateVariableDefinitions() // export variable definitions
-		this.updateVariableValues()
 		this.initTCP()
 	}
 	// When module gets deleted
@@ -82,8 +82,8 @@ class SW_P_02 extends InstanceBase {
 		UpdateFeedbacks(this)
 	}
 
-	updateVariableDefinitions() {
-		UpdateVariableDefinitions(this)
+	async updateVariableDefinitions() {
+		await UpdateVariableDefinitions(this)
 	}
 }
 
