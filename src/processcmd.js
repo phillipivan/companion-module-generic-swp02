@@ -42,13 +42,13 @@ export function processCmd(chunk) {
 				this.log('warn', `Tally. Unexpected Length. Expected: ${msgLength.connected} Recieved: ${reply.length}`)
 				return undefined
 			}
-			this.log('info', `tally/connected msg recieved: ${reply}`)
 			dstSrc = this.returnDstSrc(reply[1], reply[2], reply[3])
 			if (dstSrc === undefined) {
 				this.log('warn', 'returnDstSrc returned undefined, cannot process tally/connected response')
 				return undefined
 			}
 			this.connections[dstSrc[0]] = dstSrc[1]
+			this.log('info', `tally/connected msg recieved. Destination: ${dstSrc[0]} Source: ${dstSrc[1]}`)
 			varList[`dst${dstSrc[0]}`] = this.connections[dstSrc[0]]
 			this.checkFeedbacks('checkCrosspoint')
 			this.setVariableValues(varList)
