@@ -1,13 +1,14 @@
 {
 	"name": "generic-swp02",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"main": "src/main.js",
 	"type": "module",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format": "prettier --write",
-		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
-		"lint": "yarn lint:raw ."
+		"lint:raw": "eslint",
+		"lint": "yarn lint:raw .",
+		"package": "yarn companion-module-build"
 	},
 	"license": "MIT",
 	"repository": {
@@ -15,10 +16,16 @@
 		"url": "git+https://github.com/bitfocus/companion-module-generic-swp02.git"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.8.0"
+		"@companion-module/base": "~1.11.2"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^1.5.1"
+		"@companion-module/tools": "^2.1.0",
+		"eslint": "^9.15.0",
+		"prettier": "^3.3.3"
 	},
-	"prettier": "@companion-module/tools/.prettierrc.json"
+	"prettier": "@companion-module/tools/.prettierrc.json",
+	"engines": {
+		"node": "^22.11"
+	},
+	"packageManager": "yarn@4.5.1"
 }
