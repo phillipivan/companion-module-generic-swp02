@@ -35,7 +35,7 @@ export default async function (self) {
 				if (isNaN(dst) || dst < 0 || dst > self.config.dst) {
 					self.log(
 						'warn',
-						`feedback:checkCrosspoint:callback - invalid dest provided ${dst} from ${feedback.options.dst}`
+						`feedback:checkCrosspoint:callback - invalid dest provided ${dst} from ${feedback.options.dst}`,
 					)
 					return undefined
 				} else if (dst === 0) {

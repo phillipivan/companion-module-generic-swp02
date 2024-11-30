@@ -23,7 +23,7 @@ export function processCmd(chunk) {
 			if (reply.length != msgLength.interrogate) {
 				this.log(
 					'warn',
-					` Interrogate. Unexpected Length. Expected: ${msgLength.interrogate} Recieved: ${reply.length}`
+					` Interrogate. Unexpected Length. Expected: ${msgLength.interrogate} Recieved: ${reply.length}`,
 				)
 				return undefined
 			}
@@ -58,7 +58,7 @@ export function processCmd(chunk) {
 						actionId: 'connect',
 						options: { dst: dstSrc[0], src: dstSrc[1] },
 					},
-					`connect ${dstSrc[0]}`
+					`connect ${dstSrc[0]}`,
 				)
 			}
 			break
@@ -196,7 +196,7 @@ export function processCmd(chunk) {
 			if (reply.length != msgLength.dualControllerStatusResponse) {
 				this.log(
 					'warn',
-					` dualControllerStatusResponse. Unexpected Length. Expected: ${msgLength.dualControllerStatusResponse} Recieved: ${reply.length}`
+					` dualControllerStatusResponse. Unexpected Length. Expected: ${msgLength.dualControllerStatusResponse} Recieved: ${reply.length}`,
 				)
 				return undefined
 			}
@@ -246,7 +246,7 @@ export function processCmd(chunk) {
 			}
 			this.log(
 				'warn',
-				'unit unexpectedly returned a extendedTally/extendedConnected. this module does not handle extended commands'
+				'unit unexpectedly returned a extendedTally/extendedConnected. this module does not handle extended commands',
 			)
 			break
 		case cmd.extendedConnectOnGo:
@@ -275,7 +275,7 @@ export function processCmd(chunk) {
 			if (reply.length != msgLength.routerConfigurationRequest) {
 				this.log(
 					'warn',
-					`Unexpected Length. Expected: ${msgLength.routerConfigurationRequest} Recieved: ${reply.length}`
+					`Unexpected Length. Expected: ${msgLength.routerConfigurationRequest} Recieved: ${reply.length}`,
 				)
 				return undefined
 			}
@@ -285,7 +285,7 @@ export function processCmd(chunk) {
 			if (reply.length != msgLength.routerConfigurationResponse1) {
 				this.log(
 					'warn',
-					`Unexpected Length. Expected: ${msgLength.routerConfigurationResponse1} Recieved: ${reply.length}`
+					`Unexpected Length. Expected: ${msgLength.routerConfigurationResponse1} Recieved: ${reply.length}`,
 				)
 				return undefined
 			}
@@ -295,7 +295,7 @@ export function processCmd(chunk) {
 			if (reply.length != msgLength.routerConfigurationResponse2) {
 				this.log(
 					'warn',
-					`Unexpected Length. Expected: ${msgLength.routerConfigurationResponse2} Recieved: ${reply.length}`
+					`Unexpected Length. Expected: ${msgLength.routerConfigurationResponse2} Recieved: ${reply.length}`,
 				)
 				return undefined
 			}
