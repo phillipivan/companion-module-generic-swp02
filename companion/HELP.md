@@ -33,6 +33,10 @@ The Action Recorder will translate any recieved tally or connected messages into
 
 ## Version History
 
+### Version 1.2.4
+
+- Parse variables with context object
+
 ### Version 1.2.3
 
 - Use Node 22
