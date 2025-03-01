@@ -61,7 +61,7 @@ export default function (self) {
 					self.calcCheckSum([cmd.interrogate, multiplier, dst[1]]),
 				])
 			},
-			learn: async (action) => {
+			learn: async (action, context) => {
 				let dst = parseInt(await context.parseVariablesInString(action.options.dst))
 				if (isNaN(dst) || dst < 0 || dst > self.config.dst) {
 					self.log('warn', `an invalid variable has been passed: ${dst}`)
