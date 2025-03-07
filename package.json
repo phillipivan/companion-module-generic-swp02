@@ -18,13 +18,13 @@
 		"@companion-module/base": "~1.11.3"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^2.1.1",
+		"@companion-module/tools": "^2.2.1",
 		"eslint": "^9.21.0",
-		"prettier": "^3.5.2"
+		"prettier": "^3.5.3"
 	},
 	"prettier": "@companion-module/tools/.prettierrc.json",
 	"engines": {
 		"node": "^22.13"
 	},
-	"packageManager": "yarn@4.6.0"
+	"packageManager": "yarn@4.7.0"
 }
